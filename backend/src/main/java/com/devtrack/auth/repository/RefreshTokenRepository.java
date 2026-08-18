@@ -10,13 +10,13 @@ import org.springframework.data.repository.query.Param;
 
 public interface RefreshTokenRepository extends JpaRepository<RefreshToken, UUID> {
 
-    Optional<RefreshToken> findByTokenHash(String tokenHash);
+  Optional<RefreshToken> findByTokenHash(String tokenHash);
 
-    // Supports 12_Security.md §2.4's defensive "revoke everything" branch when
-    // token reuse is detected — one bulk update, not N individual saves.
-    @Modifying
-    @Query(
-            "update RefreshToken r set r.revokedAt = current_timestamp "
-                    + "where r.user.id = :userId and r.revokedAt is null")
-    void revokeAllActiveForUser(@Param("userId") UUID userId);
+  // Supports 12_Security.md §2.4's defensive "revoke everything" branch when
+  // token reuse is detected — one bulk update, not N individual saves.
+  @Modifying
+  @Query(
+      "update RefreshToken r set r.revokedAt = current_timestamp "
+          + "where r.user.id = :userId and r.revokedAt is null")
+  void revokeAllActiveForUser(@Param("userId") UUID userId);
 }

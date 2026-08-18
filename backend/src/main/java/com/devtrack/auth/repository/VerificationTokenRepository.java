@@ -7,5 +7,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface VerificationTokenRepository extends JpaRepository<VerificationToken, UUID> {
 
-    Optional<VerificationToken> findByTokenHash(String tokenHash);
+  Optional<VerificationToken> findByTokenHash(String tokenHash);
 }

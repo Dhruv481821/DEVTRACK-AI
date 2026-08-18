@@ -17,22 +17,25 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/v1/settings")
 public class SettingsController {
 
-    private final SettingsService settingsService;
-    private final CurrentUserResolver currentUserResolver;
+  private final SettingsService settingsService;
+  private final CurrentUserResolver currentUserResolver;
 
-    public SettingsController(SettingsService settingsService, CurrentUserResolver currentUserResolver) {
-        this.settingsService = settingsService;
-        this.currentUserResolver = currentUserResolver;
-    }
+  public SettingsController(
+      SettingsService settingsService, CurrentUserResolver currentUserResolver) {
+    this.settingsService = settingsService;
+    this.currentUserResolver = currentUserResolver;
+  }
 
-    @GetMapping("/me")
-    public ApiEnvelope<SettingsResponse> getMySettings() {
-        return ApiEnvelope.success(settingsService.getMySettings(currentUserResolver.getCurrentUserId()));
-    }
+  @GetMapping("/me")
+  public ApiEnvelope<SettingsResponse> getMySettings() {
+    return ApiEnvelope.success(
+        settingsService.getMySettings(currentUserResolver.getCurrentUserId()));
+  }
 
-    @PatchMapping("/me")
-    public ApiEnvelope<SettingsResponse> updateMySettings(@Valid @RequestBody UpdateSettingsRequest request) {
-        return ApiEnvelope.success(
-                settingsService.updateMySettings(currentUserResolver.getCurrentUserId(), request));
-    }
+  @PatchMapping("/me")
+  public ApiEnvelope<SettingsResponse> updateMySettings(
+      @Valid @RequestBody UpdateSettingsRequest request) {
+    return ApiEnvelope.success(
+        settingsService.updateMySettings(currentUserResolver.getCurrentUserId(), request));
+  }
 }

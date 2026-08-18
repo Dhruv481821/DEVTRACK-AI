@@ -15,44 +15,46 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class NotificationService {
 
-    private final NotificationRepository notificationRepository;
-    private final OwnershipGuard ownershipGuard;
+  private final NotificationRepository notificationRepository;
+  private final OwnershipGuard ownershipGuard;
 
-    public NotificationService(NotificationRepository notificationRepository, OwnershipGuard ownershipGuard) {
-        this.notificationRepository = notificationRepository;
-        this.ownershipGuard = ownershipGuard;
-    }
+  public NotificationService(
+      NotificationRepository notificationRepository, OwnershipGuard ownershipGuard) {
+    this.notificationRepository = notificationRepository;
+    this.ownershipGuard = ownershipGuard;
+  }
 
-    @Transactional(readOnly = true)
-    public Page<NotificationResponse> listMyNotifications(UUID userId, Pageable pageable) {
-        return notificationRepository
-                .findByUserIdOrderByReadAscCreatedAtDesc(userId, pageable)
-                .map(this::toResponse);
-    }
+  @Transactional(readOnly = true)
+  public Page<NotificationResponse> listMyNotifications(UUID userId, Pageable pageable) {
+    return notificationRepository
+        .findByUserIdOrderByReadAscCreatedAtDesc(userId, pageable)
+        .map(this::toResponse);
+  }
 
-    /**
-     * The first real use of OwnershipGuard (06_API_Specification.md §1.6) — a
-     * notification ID belonging to a different user returns 404, not 403, so a
-     * caller can't distinguish "not yours" from "doesn't exist."
-     */
-    @Transactional
-    public void markRead(UUID notificationId, UUID requestingUserId) {
-        Notification notification =
-                notificationRepository
-                        .findById(notificationId)
-                        .orElseThrow(() -> new ResourceNotFoundException("Notification not found."));
-        ownershipGuard.assertOwnedBy(notification.getUserId(), requestingUserId);
+  /**
+   * The first real use of OwnershipGuard (06_API_Specification.md §1.6) — a notification ID
+   * belonging to a different user returns 404, not 403, so a caller can't distinguish "not yours"
+   * from "doesn't exist."
+   */
+  @Transactional
+  public void markRead(UUID notificationId, UUID requestingUserId) {
+    Notification notification =
+        notificationRepository
+            .findById(notificationId)
+            .orElseThrow(() -> new ResourceNotFoundException("Notification not found."));
+    ownershipGuard.assertOwnedBy(notification.getUserId(), requestingUserId);
 
-        notification.setRead(true);
-        notificationRepository.save(notification);
-    }
+    notification.setRead(true);
+    notificationRepository.save(notification);
+  }
 
-    @Transactional
-    public void markAllRead(UUID userId) {
-        notificationRepository.markAllReadForUser(userId);
-    }
+  @Transactional
+  public void markAllRead(UUID userId) {
+    notificationRepository.markAllReadForUser(userId);
+  }
 
-    private NotificationResponse toResponse(Notification n) {
-        return new NotificationResponse(n.getId(), n.getType(), n.getPayload(), n.isRead(), n.getCreatedAt());
-    }
+  private NotificationResponse toResponse(Notification n) {
+    return new NotificationResponse(
+        n.getId(), n.getType(), n.getPayload(), n.isRead(), n.getCreatedAt());
+  }
 }

@@ -14,43 +14,43 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class ProfileService {
 
-    private final UserProfileRepository userProfileRepository;
+  private final UserProfileRepository userProfileRepository;
 
-    public ProfileService(UserProfileRepository userProfileRepository) {
-        this.userProfileRepository = userProfileRepository;
-    }
+  public ProfileService(UserProfileRepository userProfileRepository) {
+    this.userProfileRepository = userProfileRepository;
+  }
 
-    @Transactional(readOnly = true)
-    public ProfileResponse getMyProfile(UUID userId) {
-        UserProfile profile = findOrThrow(userId);
-        return toResponse(profile);
-    }
+  @Transactional(readOnly = true)
+  public ProfileResponse getMyProfile(UUID userId) {
+    UserProfile profile = findOrThrow(userId);
+    return toResponse(profile);
+  }
 
-    @Transactional
-    public ProfileResponse updateMyProfile(UUID userId, UpdateProfileRequest request) {
-        UserProfile profile = findOrThrow(userId);
-        // PATCH semantics — only overwrite fields the caller actually provided.
-        if (request.displayName() != null) {
-            profile.setDisplayName(request.displayName());
-        }
-        if (request.bio() != null) {
-            profile.setBio(request.bio());
-        }
-        profile.setUpdatedAt(Instant.now());
-        userProfileRepository.save(profile);
-        return toResponse(profile);
+  @Transactional
+  public ProfileResponse updateMyProfile(UUID userId, UpdateProfileRequest request) {
+    UserProfile profile = findOrThrow(userId);
+    // PATCH semantics — only overwrite fields the caller actually provided.
+    if (request.displayName() != null) {
+      profile.setDisplayName(request.displayName());
     }
+    if (request.bio() != null) {
+      profile.setBio(request.bio());
+    }
+    profile.setUpdatedAt(Instant.now());
+    userProfileRepository.save(profile);
+    return toResponse(profile);
+  }
 
-    private UserProfile findOrThrow(UUID userId) {
-        // Should always exist — created by UserProfileInitializer at registration —
-        // so hitting this exception means a real invariant was violated, not a
-        // normal "not found" case a client caused.
-        return userProfileRepository
-                .findById(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("Profile not found."));
-    }
+  private UserProfile findOrThrow(UUID userId) {
+    // Should always exist — created by UserProfileInitializer at registration —
+    // so hitting this exception means a real invariant was violated, not a
+    // normal "not found" case a client caused.
+    return userProfileRepository
+        .findById(userId)
+        .orElseThrow(() -> new ResourceNotFoundException("Profile not found."));
+  }
 
-    private ProfileResponse toResponse(UserProfile profile) {
-        return new ProfileResponse(profile.getDisplayName(), profile.getAvatarUrl(), profile.getBio());
-    }
+  private ProfileResponse toResponse(UserProfile profile) {
+    return new ProfileResponse(profile.getDisplayName(), profile.getAvatarUrl(), profile.getBio());
+  }
 }

@@ -5,5 +5,5 @@ import java.util.Map;
 
 /** FR-SET-01. */
 public record UpdateSettingsRequest(
-        @Pattern(regexp = "^(dark|light)$", message = "Theme must be 'dark' or 'light'") String theme,
-        Map<String, Object> notificationPrefs) {}
+    @Pattern(regexp = "^(dark|light)$", message = "Theme must be 'dark' or 'light'") String theme,
+    Map<String, Object> notificationPrefs) {}

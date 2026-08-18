@@ -17,27 +17,28 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/v1/profile")
 public class ProfileController {
 
-    private final ProfileService profileService;
-    private final CurrentUserResolver currentUserResolver;
+  private final ProfileService profileService;
+  private final CurrentUserResolver currentUserResolver;
 
-    public ProfileController(ProfileService profileService, CurrentUserResolver currentUserResolver) {
-        this.profileService = profileService;
-        this.currentUserResolver = currentUserResolver;
-    }
+  public ProfileController(ProfileService profileService, CurrentUserResolver currentUserResolver) {
+    this.profileService = profileService;
+    this.currentUserResolver = currentUserResolver;
+  }
 
-    @GetMapping("/me")
-    public ApiEnvelope<ProfileResponse> getMyProfile() {
-        return ApiEnvelope.success(profileService.getMyProfile(currentUserResolver.getCurrentUserId()));
-    }
+  @GetMapping("/me")
+  public ApiEnvelope<ProfileResponse> getMyProfile() {
+    return ApiEnvelope.success(profileService.getMyProfile(currentUserResolver.getCurrentUserId()));
+  }
 
-    @PatchMapping("/me")
-    public ApiEnvelope<ProfileResponse> updateMyProfile(@Valid @RequestBody UpdateProfileRequest request) {
-        return ApiEnvelope.success(
-                profileService.updateMyProfile(currentUserResolver.getCurrentUserId(), request));
-    }
+  @PatchMapping("/me")
+  public ApiEnvelope<ProfileResponse> updateMyProfile(
+      @Valid @RequestBody UpdateProfileRequest request) {
+    return ApiEnvelope.success(
+        profileService.updateMyProfile(currentUserResolver.getCurrentUserId(), request));
+  }
 
-    // POST /me/avatar (Cloudinary upload) — deliberately not built in this slice.
-    // Multipart file handling + a real external API integration is a meaningfully
-    // separate piece of work from these two mechanical CRUD endpoints; see
-    // /docs/06_API_Specification.md §2.2 for the endpoint this will eventually be.
+  // POST /me/avatar (Cloudinary upload) — deliberately not built in this slice.
+  // Multipart file handling + a real external API integration is a meaningfully
+  // separate piece of work from these two mechanical CRUD endpoints; see
+  // /docs/06_API_Specification.md §2.2 for the endpoint this will eventually be.
 }

@@ -21,30 +21,30 @@ import org.hibernate.type.SqlTypes;
 @NoArgsConstructor
 public class UserSettings {
 
-    @Id
-    @Column(name = "user_id")
-    private UUID userId;
+  @Id
+  @Column(name = "user_id")
+  private UUID userId;
 
-    @Column(nullable = false)
-    private String theme = "dark";
+  @Column(nullable = false)
+  private String theme = "dark";
 
-    // Hibernate 6's native JSON mapping — no extra library needed for jsonb.
-    @JdbcTypeCode(SqlTypes.JSON)
-    @Column(name = "notification_prefs", nullable = false)
-    private Map<String, Object> notificationPrefs = Map.of();
+  // Hibernate 6's native JSON mapping — no extra library needed for jsonb.
+  @JdbcTypeCode(SqlTypes.JSON)
+  @Column(name = "notification_prefs", nullable = false)
+  private Map<String, Object> notificationPrefs = Map.of();
 
-    @Column(name = "updated_at", nullable = false)
-    private Instant updatedAt;
+  @Column(name = "updated_at", nullable = false)
+  private Instant updatedAt;
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof UserSettings other)) return false;
-        return userId != null && userId.equals(other.userId);
-    }
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (!(o instanceof UserSettings other)) return false;
+    return userId != null && userId.equals(other.userId);
+  }
 
-    @Override
-    public int hashCode() {
-        return getClass().hashCode();
-    }
+  @Override
+  public int hashCode() {
+    return getClass().hashCode();
+  }
 }

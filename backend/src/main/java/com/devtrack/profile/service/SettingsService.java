@@ -14,38 +14,38 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class SettingsService {
 
-    private final UserSettingsRepository userSettingsRepository;
+  private final UserSettingsRepository userSettingsRepository;
 
-    public SettingsService(UserSettingsRepository userSettingsRepository) {
-        this.userSettingsRepository = userSettingsRepository;
-    }
+  public SettingsService(UserSettingsRepository userSettingsRepository) {
+    this.userSettingsRepository = userSettingsRepository;
+  }
 
-    @Transactional(readOnly = true)
-    public SettingsResponse getMySettings(UUID userId) {
-        return toResponse(findOrThrow(userId));
-    }
+  @Transactional(readOnly = true)
+  public SettingsResponse getMySettings(UUID userId) {
+    return toResponse(findOrThrow(userId));
+  }
 
-    @Transactional
-    public SettingsResponse updateMySettings(UUID userId, UpdateSettingsRequest request) {
-        UserSettings settings = findOrThrow(userId);
-        if (request.theme() != null) {
-            settings.setTheme(request.theme());
-        }
-        if (request.notificationPrefs() != null) {
-            settings.setNotificationPrefs(request.notificationPrefs());
-        }
-        settings.setUpdatedAt(Instant.now());
-        userSettingsRepository.save(settings);
-        return toResponse(settings);
+  @Transactional
+  public SettingsResponse updateMySettings(UUID userId, UpdateSettingsRequest request) {
+    UserSettings settings = findOrThrow(userId);
+    if (request.theme() != null) {
+      settings.setTheme(request.theme());
     }
+    if (request.notificationPrefs() != null) {
+      settings.setNotificationPrefs(request.notificationPrefs());
+    }
+    settings.setUpdatedAt(Instant.now());
+    userSettingsRepository.save(settings);
+    return toResponse(settings);
+  }
 
-    private UserSettings findOrThrow(UUID userId) {
-        return userSettingsRepository
-                .findById(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("Settings not found."));
-    }
+  private UserSettings findOrThrow(UUID userId) {
+    return userSettingsRepository
+        .findById(userId)
+        .orElseThrow(() -> new ResourceNotFoundException("Settings not found."));
+  }
 
-    private SettingsResponse toResponse(UserSettings settings) {
-        return new SettingsResponse(settings.getTheme(), settings.getNotificationPrefs());
-    }
+  private SettingsResponse toResponse(UserSettings settings) {
+    return new SettingsResponse(settings.getTheme(), settings.getNotificationPrefs());
+  }
 }

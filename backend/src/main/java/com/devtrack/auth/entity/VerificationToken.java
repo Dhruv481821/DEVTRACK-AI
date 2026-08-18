@@ -18,10 +18,9 @@ import lombok.Setter;
 import org.hibernate.annotations.UuidGenerator;
 
 /**
- * Backs both FR-AUTH-05 (password reset) and email verification. Stores a HASH of
- * the token, same pattern as RefreshToken — see /docs/05_Database_Architecture.md's
- * 2026-08-08 update note for why this table exists (a gap in the original Phase 0
- * schema, fixed here).
+ * Backs both FR-AUTH-05 (password reset) and email verification. Stores a HASH of the token, same
+ * pattern as RefreshToken — see /docs/05_Database_Architecture.md's 2026-08-08 update note for why
+ * this table exists (a gap in the original Phase 0 schema, fixed here).
  */
 @Entity
 @Table(name = "verification_token")
@@ -30,40 +29,37 @@ import org.hibernate.annotations.UuidGenerator;
 @NoArgsConstructor
 public class VerificationToken {
 
-    @Id
-    @GeneratedValue
-    @UuidGenerator
-    private UUID id;
+  @Id @GeneratedValue @UuidGenerator private UUID id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
-    private AppUser user;
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "user_id", nullable = false)
+  private AppUser user;
 
-    @Column(name = "token_hash", nullable = false, unique = true)
-    private String tokenHash;
+  @Column(name = "token_hash", nullable = false, unique = true)
+  private String tokenHash;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private VerificationTokenType type;
+  @Enumerated(EnumType.STRING)
+  @Column(nullable = false)
+  private VerificationTokenType type;
 
-    @Column(name = "expires_at", nullable = false)
-    private Instant expiresAt;
+  @Column(name = "expires_at", nullable = false)
+  private Instant expiresAt;
 
-    @Column(name = "used_at")
-    private Instant usedAt;
+  @Column(name = "used_at")
+  private Instant usedAt;
 
-    @Column(name = "created_at", nullable = false, updatable = false)
-    private Instant createdAt;
+  @Column(name = "created_at", nullable = false, updatable = false)
+  private Instant createdAt;
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof VerificationToken other)) return false;
-        return id != null && id.equals(other.id);
-    }
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (!(o instanceof VerificationToken other)) return false;
+    return id != null && id.equals(other.id);
+  }
 
-    @Override
-    public int hashCode() {
-        return getClass().hashCode();
-    }
+  @Override
+  public int hashCode() {
+    return getClass().hashCode();
+  }
 }

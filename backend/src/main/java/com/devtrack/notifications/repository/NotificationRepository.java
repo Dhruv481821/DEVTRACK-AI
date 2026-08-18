@@ -11,11 +11,11 @@ import org.springframework.data.repository.query.Param;
 
 public interface NotificationRepository extends JpaRepository<Notification, UUID> {
 
-    // Unread-first ordering — matches the actual query shape the notification
-    // center needs, per 05_Database_Architecture.md §7's index note for this table.
-    Page<Notification> findByUserIdOrderByReadAscCreatedAtDesc(UUID userId, Pageable pageable);
+  // Unread-first ordering — matches the actual query shape the notification
+  // center needs, per 05_Database_Architecture.md §7's index note for this table.
+  Page<Notification> findByUserIdOrderByReadAscCreatedAtDesc(UUID userId, Pageable pageable);
 
-    @Modifying
-    @Query("update Notification n set n.read = true where n.userId = :userId and n.read = false")
-    void markAllReadForUser(@Param("userId") UUID userId);
+  @Modifying
+  @Query("update Notification n set n.read = true where n.userId = :userId and n.read = false")
+  void markAllReadForUser(@Param("userId") UUID userId);
 }
