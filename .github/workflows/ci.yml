@@ -1,0 +1,74 @@
+name: CI
+
+# Implements /docs/14_DevOps.md §3, updated per that doc's 2026-08-17 note: the
+# deploy job below is the real gate — it's what makes a Railway deploy actually
+# depend on tests passing, since Railway's own native GitHub integration (still
+# connected) does not. See that dated note for the full reasoning, including why
+# Vercel is deliberately left on its own native auto-deploy.
+#
+# Prerequisite this workflow depends on, done once, manually, outside this file:
+# Railway's dashboard → Settings → disable "Auto Deploy" (or equivalent toggle)
+# for this service. Without that, Railway still deploys directly on push
+# regardless of what this workflow decides — this file becomes the only trigger
+# once that's off.
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+          cache: maven
+      - name: Lint (Spotless)
+        run: ./mvnw -B spotless:check
+      - name: Test
+        run: ./mvnw -B test
+
+  frontend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - run: npm ci
+      - name: Lint
+        run: npm run lint
+      - name: Test
+        run: npm run test
+      - name: Build
+        run: npm run build
+
+  deploy-backend:
+    needs: [backend, frontend]
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Railway CLI
+        run: npm i -g @railway/cli
+      - name: Deploy to Railway
+        # Triggers a fresh build+deploy from this exact commit, only reachable
+        # because the backend/frontend jobs above already succeeded — this is
+        # the actual gate. Flyway migrations run on app startup as part of this
+        # deploy (14_DevOps.md's 2026-08-17 update), not as a separate step here.
+        run: railway up --service devtrack-ai-backend --detach
+        env:
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}

@@ -1,0 +1,28 @@
+# Local dev only — see /docs/14_DevOps.md §2. CI uses Testcontainers per test
+# (13_Testing.md §2); production uses managed Neon + Redis (04_System_Architecture.md §8).
+services:
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: devtrack_dev
+      POSTGRES_USER: devtrack
+      POSTGRES_PASSWORD: devtrack_local_only
+    ports:
+      - "5432:5432"
+    volumes:
+      - devtrack_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U devtrack -d devtrack_dev"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # Added when Phase 2 lands — 04_System_Architecture.md §3.2. Left here, commented,
+  # so it's a one-line uncomment rather than a new decision when that phase starts.
+  # redis:
+  #   image: redis:7
+  #   ports:
+  #     - "6379:6379"
+
+volumes:
+  devtrack_postgres_data:

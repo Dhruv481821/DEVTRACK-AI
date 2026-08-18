@@ -1,0 +1,49 @@
+# Local development profile — matches docker-compose.yml at the repo root.
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/devtrack_dev
+    username: devtrack
+    password: devtrack_local_only
+  jpa:
+    show-sql: true
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            # Sourced from real env vars (set via `setx`, per 15_Deployment.md §1
+            # step 3) — never hardcoded, even in a dev-only file, since these are
+            # real Google Cloud credentials, unlike the throwaway JWT keypair below.
+            # Fallback placeholders (after the colon) let the app boot cleanly
+            # before you've done the Google Cloud Console setup — the OAuth login
+            # flow just won't work against real Google until real values are set,
+            # but this doesn't break context startup or the existing test suite.
+            client-id: ${GOOGLE_OAUTH_CLIENT_ID:placeholder-client-id}
+            client-secret: ${GOOGLE_OAUTH_CLIENT_SECRET:placeholder-client-secret}
+            scope: openid, email, profile
+
+springdoc:
+  swagger-ui:
+    enabled: true
+
+logging:
+  level:
+    com.devtrack: DEBUG
+
+devtrack:
+  jwt:
+    # DEV-ONLY keypair, generated for this scaffold — never used in prod, where
+    # JWT_PRIVATE_KEY/JWT_PUBLIC_KEY come from Railway env vars instead
+    # (application-prod.yml, 15_Deployment.md §2). Fine to commit since it only
+    # ever signs tokens on a developer's own machine against a local DB.
+    private-key: "MIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQDYUWaCkD7EX0k+aGm4ADnGjBzPr+ya8YRYvQuep+syAGnB/uB6/hvnzp84I0RVvonXhcOKP9oZVXmiQW70xzpwK66Ed6XDK+sspUIhOaQO3aD1GY9zV/VSCjra746Winr/siTK6ogs+7rff6PA/qUqK1UwCWwSzRaGZ/EsGfqdxxA+EvGNF9XbwoZVc+EZv4IcRaPfZdeH14WzMg+kZ0QRO5QwZkmVJSXTvY/ahhCZzaxs6kNBAzHUrKjjkl6paf4lqGgkvAinnlT9gKUZEd8567tUJ7pmo/U9DAU2V+6uVM3b3r7YAGvcTeM7wL5u2sbRivoAAaYdbYqEAGduiBWrAgMBAAECggEAAZ6xDzpTh5pb+2W+iqQPKclhnqbusZnF64RQClWvv+pABRErlG7VvetOno6SicYRlrLtXXPBW1thrUHAPbtcNC88W0yB9dB0o2Q8gcSd58CJTGcXQW3Wl/lXH4v29ZZhxp26EgHoH1LqASK+uwptIiZdjQgNt537qplfH3WuHYqvb0YTlqzOeyyiAeufCzePl9axa7W3YYS5UFiLUxSgPPUwyK9IS+GK2rWC0mQpRByGrLcl7CFAEJXe0KJ+scdK0itDJZjp06TT17yCoJS5N/0GILGy4BARJysSNsQcxHID75rKrjzhmR9qBhCAJEvDtkcXs9U4jGFKW0dt8JPfGQKBgQD3m2aePol/peuINPtsRoxcCMeZxt9bvZRyiO+dVJRNJFiGj7lYsIxsL6JzRqoiyBumfROXN2ZAkSvIcub48gs4maMkDFBZFEDb9Ed/XbeaOuh28NDtPjsK/ICA13ZqtNv8SFlwa5GT0QzAqFLnTA3UtY/HbMCrXtXK1rPVSFUN1wKBgQDfpn13NIlpXxfgs506OAFwlGifKR25IVlWxr9VCwKMs1vZEWMWnkacJlJ/9hzhBhIos0m9AH3L7SQKqryHXDn1vkMV5I3oL+ZRUl107U42b8BkveywP/za+O9s8AV0AUK6Z9D1HtHcI/GAxUqeqvbpBp81KaB96ToNgTx+tg70TQKBgCOb3LErSzjpUqse+32B09O0i4gI+rxF0mB6YwNcU4uYi4amisA/e6JfY1xysCsaXieeWz/m/rSQbByCscbhgE2egsC/aJq29/Dp+5JMlwf+KspYLaPAzFrzH0PoOKZ15iEtAnfRcHkymkPmsS2EWYTaq5fBgx/iHpryL6Cfq2O3AoGAd49OhVpdlyoR3rrGc6gbBO8hmuxlCmIMm3o2MKVpIISFtl44JZBJWRKXifas65LORFnMMrC/jzPfz6AElywzg+7JeDutrRFmQ9UPRwHRjQJizLhHftVGPF1VyVvq3mAKJxJ2v4NRVykT4u4VfQsSYfJ7S/VL6eOzeCK9j1OOXQUCgYB2+c14sjus8Q8wotsjwzJWMT1Cj78Aoq5GYvGccBF8qC1SnVl1M4ySlg77sM9FSR+rHiqsVMLGAHIM0hS0/g5rVwd4vh7f7wb/l97pc8Fred1FrrRusUzhHBIiGpNS5xboeUp67dX9ZQWdBoNIOg3FYVguKiBD+v0SfnBvNZooTA=="
+    public-key: "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA2FFmgpA+xF9JPmhpuAA5xowcz6/smvGEWL0LnqfrMgBpwf7gev4b586fOCNEVb6J14XDij/aGVV5okFu9Mc6cCuuhHelwyvrLKVCITmkDt2g9RmPc1f1Ugo62u+Olop6/7IkyuqILPu633+jwP6lKitVMAlsEs0WhmfxLBn6nccQPhLxjRfV28KGVXPhGb+CHEWj32XXh9eFszIPpGdEETuUMGZJlSUl072P2oYQmc2sbOpDQQMx1Kyo45JeqWn+JahoJLwIp55U/YClGRHfOeu7VCe6ZqP1PQwFNlfurlTN296+2ABr3E3jO8C+btrG0Yr6AAGmHW2KhABnbogVqwIDAQAB"
+  cors:
+    allowed-origin: http://localhost:5173
+  frontend:
+    base-url: http://localhost:5173
+  resend:
+    # Blank is fine for local dev — Resend calls will fail auth and get logged
+    # (ResendEmailService swallows the failure), never crash the app. Fill in a
+    # real key only if you actually want to test email delivery locally.
+    api-key: ""

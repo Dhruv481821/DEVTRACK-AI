@@ -1,0 +1,47 @@
+# Base config shared across profiles. Secrets are never here — env vars only,
+# per 12_Security.md §9 and 15_Deployment.md §2.
+spring:
+  application:
+    name: devtrack-ai-backend
+  # Defaults local runs (mvnw spring-boot:run, IDE run configs, plain `mvnw test`
+  # without an explicit profile) to "dev" so they work without remembering a flag —
+  # this is exactly the friction that caused the JwtService NPE seen when running
+  # spring-boot:run directly. Railway always sets SPRING_PROFILES_ACTIVE=prod as a
+  # real environment variable in production (15_Deployment.md §2's checklist),
+  # which takes precedence over this default — so this change is safe for prod,
+  # not just convenient for local dev.
+  profiles:
+    active: dev
+  jpa:
+    open-in-view: false          # avoid the classic lazy-loading-in-view footgun
+    hibernate:
+      ddl-auto: validate         # schema is Flyway-managed, never Hibernate auto-DDL — 05_Database_Architecture.md §2
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: UTC
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+
+server:
+  port: 8080
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, info    # 14_DevOps.md §7 — health check target for Railway
+  endpoint:
+    health:
+      show-details: never
+
+springdoc:
+  api-docs:
+    path: /api/v1/docs/openapi
+  swagger-ui:
+    path: /api/v1/docs
+
+devtrack:
+  ai:
+    daily-request-limit: 20      # 09_AI_Architecture.md §7 — config value, not a literal, tunable without redeploy

@@ -1,0 +1,23 @@
+# Secrets — see /docs/12_Security.md §9. A committed secret is compromised
+# permanently, not just until rotated. This rule is non-negotiable.
+.env
+.env.*
+!.env.example
+
+# Backend
+backend/target/
+backend/.mvn/
+*.class
+
+# Frontend
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+
+# IDE
+.idea/
+.vscode/
+*.iml
+
+# OS
+.DS_Store

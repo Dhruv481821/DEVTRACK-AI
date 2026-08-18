@@ -1,0 +1,7 @@
+package com.devtrack.profile.repository;
+
+import com.devtrack.profile.entity.UserSettings;
+import java.util.UUID;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface UserSettingsRepository extends JpaRepository<UserSettings, UUID> {}

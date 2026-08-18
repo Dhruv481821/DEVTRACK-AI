@@ -1,0 +1,57 @@
+# Production profile — every value sourced from an env var (Railway), per
+# 15_Deployment.md §2's checklist. Nothing here is a secret; the ${...} references
+# are, and they live in Railway's env config, never in this file.
+
+# Railway assigns a dynamic port via $PORT — hardcoding 8080 breaks routing on
+# Railway specifically, since it doesn't guarantee that port is the one traffic
+# actually gets routed to. Fixed by the user directly in production; synced back
+# here so this file matches what's actually deployed.
+server:
+  port: ${PORT:8080}
+  # Railway terminates TLS at its edge proxy and forwards to this container over
+  # plain HTTP — it sets X-Forwarded-Proto: https to tell the app the original
+  # scheme, but Spring Boot ignores that header by default (a deliberate security
+  # default: blindly trusting forwarded headers from an untrusted source lets an
+  # attacker spoof them). This explicitly opts in to trusting it, which is what
+  # OAuth2's redirect-URI construction needs to correctly build an https:// URL
+  # instead of the http:// it was building without this.
+  forward-headers-strategy: framework
+
+spring:
+  datasource:
+    url: ${DB_URL}                       # Neon pooled connection string — 05_Database_Architecture.md §3.3
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+  jpa:
+    show-sql: false
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${GOOGLE_OAUTH_CLIENT_ID}
+            client-secret: ${GOOGLE_OAUTH_CLIENT_SECRET}
+            scope: openid, email, profile
+
+springdoc:
+  swagger-ui:
+    enabled: false                        # no public API explorer in prod
+
+devtrack:
+  jwt:
+    private-key: ${JWT_PRIVATE_KEY}
+    public-key: ${JWT_PUBLIC_KEY}
+  cors:
+    allowed-origin: ${CORS_ALLOWED_ORIGIN}
+  frontend:
+    base-url: ${FRONTEND_BASE_URL}
+  resend:
+    api-key: ${RESEND_API_KEY}
+  cloudinary:
+    cloud-name: ${CLOUDINARY_CLOUD_NAME}
+    api-key: ${CLOUDINARY_API_KEY}
+    api-secret: ${CLOUDINARY_API_SECRET}
+
+logging:
+  level:
+    com.devtrack: INFO
