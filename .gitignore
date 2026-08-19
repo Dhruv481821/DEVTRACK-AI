@@ -6,7 +6,7 @@
 
 # Backend
 backend/target/
-backend/.mvn/
+# backend/.mvn/
 *.class
 
 # Frontend
