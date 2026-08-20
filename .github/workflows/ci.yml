@@ -69,6 +69,6 @@ jobs:
         # because the backend/frontend jobs above already succeeded — this is
         # the actual gate. Flyway migrations run on app startup as part of this
         # deploy (14_DevOps.md's 2026-08-17 update), not as a separate step here.
-        run: railway up --service devtrack-ai-backend --detach
+        run: railway up --service DEVTRACK-AI --detach
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
