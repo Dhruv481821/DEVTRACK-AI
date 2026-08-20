@@ -19,6 +19,11 @@ Input.displayName = 'Input';
 
 export function Label({ className, ...props }: LabelHTMLAttributes<HTMLLabelElement>) {
   return (
+    // This generic Label primitive forwards htmlFor through props.
+    // The jsx-a11y rule cannot trace the forwarded prop through the
+    // component boundary, so it reports a false positive here.
+    // All concrete usages provide htmlFor to associate the label with a control.
+    // eslint-disable-next-line jsx-a11y/label-has-associated-control
     <label
       className={clsx('mb-1.5 block font-body text-sm font-medium text-text-primary', className)}
       {...props}
