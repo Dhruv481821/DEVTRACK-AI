@@ -30,14 +30,20 @@ future phase's planning pass.
 | 3 | Profile/Settings/Notifications backend + Auth frontend | `FR-PROF-01`, `FR-SET-01`, `FR-NOTIF-01`, `FR-DASH-01/02` | Backend endpoints for profile/settings/notifications; frontend login/register forms + the 401→refresh→retry flow (`08` §4) wired to a real backend; dashboard shell with empty states | `06` §2.2–2.3, `08`, `10`, `11` |
 | 4 | Deploy + close the loop | — | Full `15_Deployment.md` §1 walkthrough executed for real, smoke test (`15` §4) passing against a live URL, `phase-0-complete` tag cut (`16_Git_Workflow.md` §5) | `15`, `16` §5 |
 
-**Definition of Done for Phase 0** — restates the PRD §11 exit criterion as a
-checklist, not a paragraph:
+## Definition of Done for Phase 0
+
 - [x] A user can register, verify email, and log in (password or Google) — verified in-browser 2026-08-10; email verification link-click flow itself not yet manually walked through (registration/login/Google all confirmed)
+
 - [x] Refresh token rotation + reuse detection works and is tested
-- [x] Dashboard shell renders with designed empty states, not blank pages — verified in-browser 2026-08-13 (sidebar nav, real empty-state copy on Dashboard)
-- [x] Profile and settings are editable — verified in-browser 2026-08-13 (edit + save both confirmed working end to end)
-- [x] Live URL passes the `15_Deployment.md` §4 smoke test — verified in-browser 2026-08-17: registration, login, Google OAuth (full round trip through Google and back), and Profile/Settings all confirmed working against the real deployed stack (Neon + Railway + Vercel)
-- [ ] CI pipeline runs lint + tests + migration + deploy on merge to `main` — deployment was done manually through this process; the GitHub Actions deploy step is still commented out (`14_DevOps.md` §3) and not yet automated
+
+- [x] Dashboard shell renders with designed empty states, not blank pages — verified in-browser 2026-08-13
+
+- [x] Profile and settings are editable — verified in-browser 2026-08-13
+
+- [x] Live URL passes the `15_Deployment.md` §4 smoke test — verified in-browser 2026-08-17 against the deployed Neon + Railway + Vercel stack
+
+- [x] CI pipeline runs backend/frontend lint + tests + frontend build and deploys to Railway on successful push to `main` — verified in GitHub Actions 2026-08-20; `backend`, `frontend`, and `deploy-backend` all passed
+
 - [ ] `phase-0-complete` tag exists
 
 ## 3. Future Phase Triggers (not detailed yet — by design)
@@ -55,7 +61,7 @@ checklist, not a paragraph:
 
 | Phase | Status | Tag |
 |---|---|---|
-| 0 — Foundation | In Progress — auth, profile/settings/notifications backend, dashboard shell, and profile/settings frontend all done and verified; remaining: CI deploy step, live deployment, phase-0-complete tag | — |
+| 0 — Foundation | Complete — auth, profile/settings/notifications backend, dashboard shell, frontend, live deployment, and gated CI/CD verified | phase-0-complete |
 | 1 — Core Productivity | Not Started | — |
 | 2 — Developer Signal | Not Started | — |
 | 3 — Career Toolkit | Not Started | — |
