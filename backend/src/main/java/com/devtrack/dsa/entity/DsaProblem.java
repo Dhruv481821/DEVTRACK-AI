@@ -1,26 +1,32 @@
-package com.devtrack.certificates.entity;
+package com.devtrack.dsa.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import java.time.Instant;
-import java.time.LocalDate;
+import java.util.List;
 import java.util.UUID;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.SQLRestriction;
+import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.annotations.UuidGenerator;
+import org.hibernate.type.SqlTypes;
 
+/**
+ * user_id is a scalar — same cross-module boundary rule as every other module. No soft delete (v1
+ * has no delete endpoint).
+ */
 @Entity
-@Table(name = "certificate")
-@SQLRestriction("deleted_at IS NULL")
+@Table(name = "dsa_problem")
 @Getter
 @Setter
 @NoArgsConstructor
-public class Certificate {
+public class DsaProblem {
 
   @Id @GeneratedValue @UuidGenerator private UUID id;
 
@@ -28,16 +34,15 @@ public class Certificate {
   private UUID userId;
 
   @Column(nullable = false)
-  private String name;
+  private String title;
 
-  @Column(name = "issuing_org", nullable = false)
-  private String issuingOrg;
+  @Enumerated(EnumType.STRING)
+  @Column(nullable = false)
+  private Difficulty difficulty;
 
-  @Column(name = "issue_date")
-  private LocalDate issueDate;
-
-  @Column(name = "verification_url")
-  private String verificationUrl;
+  @JdbcTypeCode(SqlTypes.JSON)
+  @Column(nullable = false)
+  private List<String> tags = List.of();
 
   @Column(name = "created_at", nullable = false, updatable = false)
   private Instant createdAt;
@@ -45,13 +50,10 @@ public class Certificate {
   @Column(name = "updated_at", nullable = false)
   private Instant updatedAt;
 
-  @Column(name = "deleted_at")
-  private Instant deletedAt;
-
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
-    if (!(o instanceof Certificate other)) return false;
+    if (!(o instanceof DsaProblem other)) return false;
     return id != null && id.equals(other.id);
   }
 

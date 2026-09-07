@@ -22,112 +22,85 @@ import org.junit.jupiter.api.Test;
 
 class CertificateServiceTest {
 
-    private CertificateRepository certificateRepository;
-    private CertificateService certificateService;
+  private CertificateRepository certificateRepository;
+  private CertificateService certificateService;
 
-    private final UUID ownerId = UUID.randomUUID();
-    private final UUID otherUserId = UUID.randomUUID();
+  private final UUID ownerId = UUID.randomUUID();
+  private final UUID otherUserId = UUID.randomUUID();
 
-    @BeforeEach
-    void setUp() {
-        certificateRepository = mock(CertificateRepository.class);
+  @BeforeEach
+  void setUp() {
+    certificateRepository = mock(CertificateRepository.class);
 
-        certificateService =
-                new CertificateService(
-                        certificateRepository,
-                        new OwnershipGuard());
+    certificateService = new CertificateService(certificateRepository, new OwnershipGuard());
 
-        when(certificateRepository.save(any(Certificate.class)))
-                .thenAnswer(inv -> inv.getArgument(0));
-    }
+    when(certificateRepository.save(any(Certificate.class))).thenAnswer(inv -> inv.getArgument(0));
+  }
 
-    @Test
-    void create_savesWithCorrectOwner() {
+  @Test
+  void create_savesWithCorrectOwner() {
 
-        var response =
-                certificateService.create(
-                        ownerId,
-                        new CreateCertificateRequest(
-                                "AWS Certified",
-                                "Amazon",
-                                LocalDate.now(),
-                                "https://verify.example"));
+    var response =
+        certificateService.create(
+            ownerId,
+            new CreateCertificateRequest(
+                "AWS Certified", "Amazon", LocalDate.now(), "https://verify.example"));
 
-        assertThat(response.name())
-                .isEqualTo("AWS Certified");
-    }
+    assertThat(response.name()).isEqualTo("AWS Certified");
+  }
 
-    @Test
-    void update_forNonOwner_throwsNotFound() {
+  @Test
+  void update_forNonOwner_throwsNotFound() {
 
-        Certificate cert = existingCert(ownerId);
+    Certificate cert = existingCert(ownerId);
 
-        when(certificateRepository.findById(cert.getId()))
-                .thenReturn(Optional.of(cert));
+    when(certificateRepository.findById(cert.getId())).thenReturn(Optional.of(cert));
 
-        assertThatThrownBy(
-                        () ->
-                                certificateService.update(
-                                        cert.getId(),
-                                        otherUserId,
-                                        new UpdateCertificateRequest(
-                                                "x",
-                                                null,
-                                                null,
-                                                null)))
-                .isInstanceOf(ResourceNotFoundException.class);
+    assertThatThrownBy(
+            () ->
+                certificateService.update(
+                    cert.getId(), otherUserId, new UpdateCertificateRequest("x", null, null, null)))
+        .isInstanceOf(ResourceNotFoundException.class);
 
-        verify(certificateRepository, never())
-                .save(any());
-    }
+    verify(certificateRepository, never()).save(any());
+  }
 
-    @Test
-    void delete_setsDeletedAtInsteadOfHardDeleting() {
+  @Test
+  void delete_setsDeletedAtInsteadOfHardDeleting() {
 
-        Certificate cert = existingCert(ownerId);
+    Certificate cert = existingCert(ownerId);
 
-        when(certificateRepository.findById(cert.getId()))
-                .thenReturn(Optional.of(cert));
+    when(certificateRepository.findById(cert.getId())).thenReturn(Optional.of(cert));
 
-        certificateService.delete(
-                cert.getId(),
-                ownerId);
+    certificateService.delete(cert.getId(), ownerId);
 
-        assertThat(cert.getDeletedAt())
-                .isNotNull();
+    assertThat(cert.getDeletedAt()).isNotNull();
 
-        verify(certificateRepository, never())
-                .deleteById(any());
-    }
+    verify(certificateRepository, never()).deleteById(any());
+  }
 
-    @Test
-    void delete_forNonOwner_throwsNotFoundAndDoesNotDelete() {
+  @Test
+  void delete_forNonOwner_throwsNotFoundAndDoesNotDelete() {
 
-        Certificate cert = existingCert(ownerId);
+    Certificate cert = existingCert(ownerId);
 
-        when(certificateRepository.findById(cert.getId()))
-                .thenReturn(Optional.of(cert));
+    when(certificateRepository.findById(cert.getId())).thenReturn(Optional.of(cert));
 
-        assertThatThrownBy(
-                        () ->
-                                certificateService.delete(
-                                        cert.getId(),
-                                        otherUserId))
-                .isInstanceOf(ResourceNotFoundException.class);
+    assertThatThrownBy(() -> certificateService.delete(cert.getId(), otherUserId))
+        .isInstanceOf(ResourceNotFoundException.class);
 
-        assertThat(cert.getDeletedAt())
-                .isNull();
-    }
+    assertThat(cert.getDeletedAt()).isNull();
+  }
 
-    private Certificate existingCert(UUID ownerId) {
+  private Certificate existingCert(UUID ownerId) {
 
-        Certificate cert = new Certificate();
+    Certificate cert = new Certificate();
 
-        cert.setId(UUID.randomUUID());
-        cert.setUserId(ownerId);
-        cert.setName("A cert");
-        cert.setIssuingOrg("An org");
+    cert.setId(UUID.randomUUID());
+    cert.setUserId(ownerId);
+    cert.setName("A cert");
+    cert.setIssuingOrg("An org");
 
-        return cert;
-    }
+    return cert;
+  }
 }

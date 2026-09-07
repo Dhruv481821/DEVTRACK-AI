@@ -1,9 +1,12 @@
-package com.devtrack.certificates.entity;
+package com.devtrack.dsa.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.time.Instant;
 import java.time.LocalDate;
@@ -11,47 +14,39 @@ import java.util.UUID;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.SQLRestriction;
 import org.hibernate.annotations.UuidGenerator;
 
+/**
+ * @ManyToOne to DsaProblem is intra-module — same pattern as StudyTask -> StudyPlan.
+ */
 @Entity
-@Table(name = "certificate")
-@SQLRestriction("deleted_at IS NULL")
+@Table(name = "dsa_attempt")
 @Getter
 @Setter
 @NoArgsConstructor
-public class Certificate {
+public class DsaAttempt {
 
   @Id @GeneratedValue @UuidGenerator private UUID id;
 
-  @Column(name = "user_id", nullable = false)
-  private UUID userId;
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "dsa_problem_id", nullable = false)
+  private DsaProblem dsaProblem;
 
-  @Column(nullable = false)
-  private String name;
+  @Column(name = "attempted_at", nullable = false)
+  private LocalDate attemptedAt;
 
-  @Column(name = "issuing_org", nullable = false)
-  private String issuingOrg;
+  @Column(name = "time_taken_minutes")
+  private Integer timeTakenMinutes;
 
-  @Column(name = "issue_date")
-  private LocalDate issueDate;
-
-  @Column(name = "verification_url")
-  private String verificationUrl;
+  @Column private String notes;
 
   @Column(name = "created_at", nullable = false, updatable = false)
   private Instant createdAt;
 
-  @Column(name = "updated_at", nullable = false)
-  private Instant updatedAt;
-
-  @Column(name = "deleted_at")
-  private Instant deletedAt;
-
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
-    if (!(o instanceof Certificate other)) return false;
+    if (!(o instanceof DsaAttempt other)) return false;
     return id != null && id.equals(other.id);
   }
 

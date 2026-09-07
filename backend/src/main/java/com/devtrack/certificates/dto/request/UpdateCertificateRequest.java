@@ -4,7 +4,7 @@ import jakarta.validation.constraints.Size;
 import java.time.LocalDate;
 
 public record UpdateCertificateRequest(
-        @Size(max = 200) String name,
-        @Size(max = 200) String issuingOrg,
-        LocalDate issueDate,
-        @Size(max = 500) String verificationUrl) {}
+    @Size(max = 200) String name,
+    @Size(max = 200) String issuingOrg,
+    LocalDate issueDate,
+    @Size(max = 500) String verificationUrl) {}
