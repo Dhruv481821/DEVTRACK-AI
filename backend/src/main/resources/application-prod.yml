@@ -22,8 +22,14 @@ spring:
     url: ${DB_URL}                       # Neon pooled connection string — 05_Database_Architecture.md §3.3
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
+
+  data:
+    redis:
+      url: ${REDIS_URL}
+
   jpa:
     show-sql: false
+
   security:
     oauth2:
       client:
@@ -32,6 +38,11 @@ spring:
             client-id: ${GOOGLE_OAUTH_CLIENT_ID}
             client-secret: ${GOOGLE_OAUTH_CLIENT_SECRET}
             scope: openid, email, profile
+
+          github:
+            client-id: ${GITHUB_OAUTH_CLIENT_ID}
+            client-secret: ${GITHUB_OAUTH_CLIENT_SECRET}
+            scope: read:user, user:email, repo
 
 springdoc:
   swagger-ui:

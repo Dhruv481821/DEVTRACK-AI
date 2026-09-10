@@ -50,6 +50,10 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-redis</artifactId>
+        </dependency>
 
         <!-- DB / migrations -->
         <dependency>
@@ -89,6 +93,12 @@
         <dependency>
             <groupId>com.bucket4j</groupId>
             <artifactId>bucket4j_jdk17-core</artifactId>
+            <version>${bucket4j.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.bucket4j</groupId>
+            <artifactId>bucket4j_jdk17-lettuce</artifactId>
             <version>${bucket4j.version}</version>
         </dependency>
 
@@ -158,7 +168,7 @@
                         completely different Maven plugin, so the test-side fix never
                         covered it. Without this, `mvnw spring-boot:run` hits the same
                         "Asia/Calcutta" TimeZone rejection from Postgres that `mvnw
-                        test` used to.
+                        test` used to. 
                     -->
                     <jvmArguments>-Duser.timezone=UTC</jvmArguments>
                     <excludes>
@@ -169,6 +179,7 @@
                     </excludes>
                 </configuration>
             </plugin>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -187,6 +198,7 @@
                     </annotationProcessorPaths>
                 </configuration>
             </plugin>
+
             <!-- Spotless: Google Java Format, per 17_Coding_Standards.md §2 -->
             <plugin>
                 <groupId>com.diffplug.spotless</groupId>
@@ -205,19 +217,20 @@
                     </execution>
                 </executions>
             </plugin>
+
             <!--
                 Forces the forked test JVM's default timezone to UTC, consistent with
                 05_Database_Architecture.md §2's "always store UTC, never naive local
                 time" rule (already applied to Hibernate via
-                hibernate.jdbc.time_zone: UTC in application.yml). Without this,
-                the JVM's OS-derived default timezone is used instead — on some
-                Windows locales that resolves to a legacy IANA alias (e.g.
-                "Asia/Calcutta" instead of "Asia/Kolkata") that PostgreSQL's bundled
-                tzdata rejects outright at connection time. MAVEN_OPTS does NOT reach
-                this forked JVM (Surefire forks a separate process from the outer
-                Maven JVM) — argLine is the correct place to set this, and doing it
-                here means every developer's machine and CI behave identically,
-                rather than depending on a manually-set environment variable.
+                hibernate.jdbc.time_zone: UTC in application.yml). Without this, the
+                JVM's OS-derived default timezone is used instead — on some Windows
+                locales that resolves to a legacy IANA alias (e.g. "Asia/Calcutta"
+                instead of "Asia/Kolkata") that PostgreSQL's bundled tzdata rejects
+                outright at connection time. MAVEN_OPTS does NOT reach this forked JVM
+                (Surefire forks a separate process from the outer Maven JVM) — argLine
+                is the correct place to set this, and doing it here means every
+                developer's machine and CI behave identically, rather than depending
+                on a manually-set environment variable.
             -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
