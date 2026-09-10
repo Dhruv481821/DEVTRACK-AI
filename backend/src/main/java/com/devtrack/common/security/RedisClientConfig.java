@@ -7,42 +7,38 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * Provides a native Lettuce RedisClient bean for components that require it
- * directly, such as Bucket4j's LettuceBasedProxyManager.
+ * Provides a native Lettuce RedisClient bean for components that require it directly, such as
+ * Bucket4j's LettuceBasedProxyManager.
  *
- * Reuses Spring Boot's existing Redis configuration:
- * - Production: spring.data.redis.url
- * - Development: spring.data.redis.host / port
+ * <p>Reuses Spring Boot's existing Redis configuration: - Production: spring.data.redis.url -
+ * Development: spring.data.redis.host / port
  */
 @Configuration
 public class RedisClientConfig {
 
-    @Bean(destroyMethod = "shutdown")
-    public RedisClient redisClient(RedisProperties properties) {
+  @Bean(destroyMethod = "shutdown")
+  public RedisClient redisClient(RedisProperties properties) {
 
-        RedisURI uri;
+    RedisURI uri;
 
-        if (properties.getUrl() != null && !properties.getUrl().isBlank()) {
+    if (properties.getUrl() != null && !properties.getUrl().isBlank()) {
 
-            // Production: use the configured Redis URL
-            uri = RedisURI.create(properties.getUrl());
+      // Production: use the configured Redis URL
+      uri = RedisURI.create(properties.getUrl());
 
-        } else {
+    } else {
 
-            // Development: use configured host and port
-            RedisURI.Builder builder = RedisURI.builder()
-                    .withHost(properties.getHost())
-                    .withPort(properties.getPort());
+      // Development: use configured host and port
+      RedisURI.Builder builder =
+          RedisURI.builder().withHost(properties.getHost()).withPort(properties.getPort());
 
-            if (properties.getPassword() != null) {
-                builder.withPassword(
-                        properties.getPassword().toCharArray()
-                );
-            }
+      if (properties.getPassword() != null) {
+        builder.withPassword(properties.getPassword().toCharArray());
+      }
 
-            uri = builder.build();
-        }
-
-        return RedisClient.create(uri);
+      uri = builder.build();
     }
+
+    return RedisClient.create(uri);
+  }
 }
