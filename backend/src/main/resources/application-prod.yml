@@ -49,15 +49,26 @@ springdoc:
     enabled: false                        # no public API explorer in prod
 
 devtrack:
+  token-encryption-key: ${TOKEN_ENCRYPTION_KEY}
+
+  github-oauth:
+    client-id: ${GITHUB_OAUTH_CLIENT_ID}
+    client-secret: ${GITHUB_OAUTH_CLIENT_SECRET}
+    redirect-uri: https://devtrack-ai-production.up.railway.app/api/v1/github/callback
+
   jwt:
     private-key: ${JWT_PRIVATE_KEY}
     public-key: ${JWT_PUBLIC_KEY}
+
   cors:
     allowed-origin: ${CORS_ALLOWED_ORIGIN}
+
   frontend:
     base-url: ${FRONTEND_BASE_URL}
+
   resend:
     api-key: ${RESEND_API_KEY}
+
   cloudinary:
     cloud-name: ${CLOUDINARY_CLOUD_NAME}
     api-key: ${CLOUDINARY_API_KEY}
