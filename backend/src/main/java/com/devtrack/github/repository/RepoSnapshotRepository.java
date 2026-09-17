@@ -5,8 +5,7 @@ import java.util.List;
 import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface RepoSnapshotRepository
-        extends JpaRepository<RepoSnapshot, UUID> {
+public interface RepoSnapshotRepository extends JpaRepository<RepoSnapshot, UUID> {
 
-    List<RepoSnapshot> findByGithubConnectionId(UUID githubConnectionId);
+  List<RepoSnapshot> findByGithubConnectionId(UUID githubConnectionId);
 }

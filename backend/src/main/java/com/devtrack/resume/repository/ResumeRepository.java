@@ -7,5 +7,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ResumeRepository extends JpaRepository<Resume, UUID> {
 
-    List<Resume> findByUserIdOrderByUpdatedAtDesc(UUID userId);
+  List<Resume> findByUserIdOrderByUpdatedAtDesc(UUID userId);
 }

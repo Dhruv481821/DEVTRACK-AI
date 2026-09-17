@@ -17,92 +17,79 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class ResumeService {
 
-    private final ResumeRepository resumeRepository;
-    private final OwnershipGuard ownershipGuard;
+  private final ResumeRepository resumeRepository;
+  private final OwnershipGuard ownershipGuard;
 
-    public ResumeService(
-            ResumeRepository resumeRepository,
-            OwnershipGuard ownershipGuard) {
-        this.resumeRepository = resumeRepository;
-        this.ownershipGuard = ownershipGuard;
+  public ResumeService(ResumeRepository resumeRepository, OwnershipGuard ownershipGuard) {
+    this.resumeRepository = resumeRepository;
+    this.ownershipGuard = ownershipGuard;
+  }
+
+  @Transactional(readOnly = true)
+  public List<ResumeResponse> listMyResumes(UUID userId) {
+    return resumeRepository.findByUserIdOrderByUpdatedAtDesc(userId).stream()
+        .map(this::toResponse)
+        .toList();
+  }
+
+  @Transactional(readOnly = true)
+  public ResumeResponse getMyResume(UUID resumeId, UUID userId) {
+    Resume resume = findOrThrow(resumeId);
+    ownershipGuard.assertOwnedBy(resume.getUserId(), userId);
+    return toResponse(resume);
+  }
+
+  @Transactional
+  public ResumeResponse createResume(UUID userId, CreateResumeRequest request) {
+
+    Resume resume = new Resume();
+    resume.setUserId(userId);
+    resume.setTitle(request.title());
+    resume.setCreatedAt(Instant.now());
+    resume.setUpdatedAt(Instant.now());
+
+    resumeRepository.save(resume);
+
+    return toResponse(resume);
+  }
+
+  @Transactional
+  public ResumeResponse updateResume(UUID resumeId, UUID userId, UpdateResumeRequest request) {
+
+    Resume resume = findOrThrow(resumeId);
+    ownershipGuard.assertOwnedBy(resume.getUserId(), userId);
+
+    if (request.title() != null) {
+      resume.setTitle(request.title());
     }
 
-    @Transactional(readOnly = true)
-    public List<ResumeResponse> listMyResumes(UUID userId) {
-        return resumeRepository
-                .findByUserIdOrderByUpdatedAtDesc(userId)
-                .stream()
-                .map(this::toResponse)
-                .toList();
-    }
+    resume.setUpdatedAt(Instant.now());
+    resumeRepository.save(resume);
 
-    @Transactional(readOnly = true)
-    public ResumeResponse getMyResume(UUID resumeId, UUID userId) {
-        Resume resume = findOrThrow(resumeId);
-        ownershipGuard.assertOwnedBy(resume.getUserId(), userId);
-        return toResponse(resume);
-    }
+    return toResponse(resume);
+  }
 
-    @Transactional
-    public ResumeResponse createResume(
-            UUID userId,
-            CreateResumeRequest request) {
+  @Transactional
+  public void deleteResume(UUID resumeId, UUID userId) {
+    Resume resume = findOrThrow(resumeId);
+    ownershipGuard.assertOwnedBy(resume.getUserId(), userId);
 
-        Resume resume = new Resume();
-        resume.setUserId(userId);
-        resume.setTitle(request.title());
-        resume.setCreatedAt(Instant.now());
-        resume.setUpdatedAt(Instant.now());
+    resume.setDeletedAt(Instant.now());
+    resumeRepository.save(resume);
+  }
 
-        resumeRepository.save(resume);
+  Resume findOrThrow(UUID resumeId) {
+    return resumeRepository
+        .findById(resumeId)
+        .orElseThrow(() -> new ResourceNotFoundException("Resume not found."));
+  }
 
-        return toResponse(resume);
-    }
+  void assertOwned(Resume resume, UUID userId) {
+    ownershipGuard.assertOwnedBy(resume.getUserId(), userId);
+  }
 
-    @Transactional
-    public ResumeResponse updateResume(
-            UUID resumeId,
-            UUID userId,
-            UpdateResumeRequest request) {
-
-        Resume resume = findOrThrow(resumeId);
-        ownershipGuard.assertOwnedBy(resume.getUserId(), userId);
-
-        if (request.title() != null) {
-            resume.setTitle(request.title());
-        }
-
-        resume.setUpdatedAt(Instant.now());
-        resumeRepository.save(resume);
-
-        return toResponse(resume);
-    }
-
-    @Transactional
-    public void deleteResume(UUID resumeId, UUID userId) {
-        Resume resume = findOrThrow(resumeId);
-        ownershipGuard.assertOwnedBy(resume.getUserId(), userId);
-
-        resume.setDeletedAt(Instant.now());
-        resumeRepository.save(resume);
-    }
-
-    Resume findOrThrow(UUID resumeId) {
-        return resumeRepository
-                .findById(resumeId)
-                .orElseThrow(
-                        () -> new ResourceNotFoundException("Resume not found."));
-    }
-
-    void assertOwned(Resume resume, UUID userId) {
-        ownershipGuard.assertOwnedBy(resume.getUserId(), userId);
-    }
-
-    private ResumeResponse toResponse(Resume resume) {
-        return new ResumeResponse(
-                resume.getId(),
-                resume.getTitle(),
-                resume.getCreatedAt(),
-                resume.getUpdatedAt());
-    }
+  private ResumeResponse toResponse(Resume resume) {
+    return new ResumeResponse(
+        resume.getId(), resume.getTitle(), resume.getCreatedAt(), resume.getUpdatedAt());
+  }
 }

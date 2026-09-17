@@ -62,7 +62,6 @@ public class SecurityConfig {
                     // FR-AUTH-* — registration/login/refresh must be reachable unauthenticated
                     .requestMatchers("/api/v1/auth/**")
                     .permitAll()
-
                     .requestMatchers("/api/v1/github/callback")
                     .permitAll()
                     // Spring's own OAuth2 authorization-request and callback endpoints —

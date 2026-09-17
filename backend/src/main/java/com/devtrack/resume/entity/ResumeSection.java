@@ -30,41 +30,38 @@ import org.hibernate.type.SqlTypes;
 @NoArgsConstructor
 public class ResumeSection {
 
-    @Id
-    @GeneratedValue
-    @UuidGenerator
-    private UUID id;
+  @Id @GeneratedValue @UuidGenerator private UUID id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "resume_id", nullable = false)
-    private Resume resume;
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "resume_id", nullable = false)
+  private Resume resume;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "section_type", nullable = false)
-    private SectionType sectionType;
+  @Enumerated(EnumType.STRING)
+  @Column(name = "section_type", nullable = false)
+  private SectionType sectionType;
 
-    @JdbcTypeCode(SqlTypes.JSON)
-    @Column(nullable = false)
-    private Map<String, Object> content = Map.of();
+  @JdbcTypeCode(SqlTypes.JSON)
+  @Column(nullable = false)
+  private Map<String, Object> content = Map.of();
 
-    @Column(name = "order_index", nullable = false)
-    private int orderIndex;
+  @Column(name = "order_index", nullable = false)
+  private int orderIndex;
 
-    @Column(name = "created_at", nullable = false, updatable = false)
-    private Instant createdAt;
+  @Column(name = "created_at", nullable = false, updatable = false)
+  private Instant createdAt;
 
-    @Column(name = "updated_at", nullable = false)
-    private Instant updatedAt;
+  @Column(name = "updated_at", nullable = false)
+  private Instant updatedAt;
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof ResumeSection other)) return false;
-        return id != null && id.equals(other.id);
-    }
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (!(o instanceof ResumeSection other)) return false;
+    return id != null && id.equals(other.id);
+  }
 
-    @Override
-    public int hashCode() {
-        return getClass().hashCode();
-    }
+  @Override
+  public int hashCode() {
+    return getClass().hashCode();
+  }
 }
