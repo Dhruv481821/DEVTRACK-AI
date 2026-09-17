@@ -27,8 +27,8 @@ import org.testcontainers.utility.DockerImageName;
  * spring.data.redis.host=localhost/port=6379 only worked by accident on machines that happened to
  * have a Redis instance already running there — it silently failed on GitHub Actions, which
  * provisions no such thing. A real, ephemeral Testcontainers Redis container, wired the same way as
- * Postgres below, removes that hidden local-environment dependency for good instead of papering over
- * it with a CI-only services: block.
+ * Postgres below, removes that hidden local-environment dependency for good instead of papering
+ * over it with a CI-only services: block.
  *
  * <p>Activates the "dev" profile specifically to load its JWT keypair, CORS origin, and email
  * config (application-dev.yml) — without this, JwtService's constructor NPEs trying to
