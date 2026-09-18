@@ -4,8 +4,10 @@ import com.devtrack.common.dto.ApiEnvelope;
 import com.devtrack.common.security.CurrentUserResolver;
 import com.devtrack.studyplanner.dto.request.CreateStudyPlanRequest;
 import com.devtrack.studyplanner.dto.request.UpdateStudyPlanRequest;
+import com.devtrack.studyplanner.dto.response.StreakResponse;
 import com.devtrack.studyplanner.dto.response.StudyPlanResponse;
 import com.devtrack.studyplanner.service.StudyPlanService;
+import com.devtrack.studyplanner.service.StudyStreakService;
 import jakarta.validation.Valid;
 import java.util.List;
 import java.util.UUID;
@@ -26,6 +28,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class StudyPlanController {
 
   private final StudyPlanService studyPlanService;
+  private final StudyStreakService studyStreakService;
   private final CurrentUserResolver currentUserResolver;
 
   @PostMapping
@@ -44,6 +47,14 @@ public class StudyPlanController {
     UUID userId = currentUserResolver.getCurrentUserId();
 
     return ResponseEntity.ok(ApiEnvelope.success(studyPlanService.getPlans(userId)));
+  }
+
+  @GetMapping("/streak")
+  public ResponseEntity<ApiEnvelope<StreakResponse>> getStreak() {
+
+    UUID userId = currentUserResolver.getCurrentUserId();
+
+    return ResponseEntity.ok(ApiEnvelope.success(studyStreakService.getStreak(userId)));
   }
 
   @PatchMapping("/{id}")

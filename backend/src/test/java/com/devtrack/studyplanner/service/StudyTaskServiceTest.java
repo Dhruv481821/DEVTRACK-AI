@@ -1,57 +1,160 @@
+// backend/src/test/java/com/devtrack/studyplanner/service/StudyTaskServiceTest.java
 package com.devtrack.studyplanner.service;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
+import com.devtrack.common.exception.ResourceNotFoundException;
 import com.devtrack.studyplanner.dto.request.CreateStudyTaskRequest;
-import com.devtrack.studyplanner.dto.response.StudyTaskResponse;
+import com.devtrack.studyplanner.dto.request.UpdateStudyTaskRequest;
 import com.devtrack.studyplanner.entity.StudyPlan;
 import com.devtrack.studyplanner.entity.StudyTask;
-import com.devtrack.studyplanner.repository.StudyPlanRepository;
 import com.devtrack.studyplanner.repository.StudyTaskRepository;
 import java.time.LocalDate;
+import java.util.Optional;
 import java.util.UUID;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
 
-@ExtendWith(MockitoExtension.class)
 class StudyTaskServiceTest {
 
-  @Mock private StudyPlanRepository studyPlanRepository;
+  private StudyTaskRepository studyTaskRepository;
+  private StudyPlanService studyPlanService;
+  private StudyStreakService studyStreakService;
+  private StudyTaskService studyTaskService;
 
-  @Mock private StudyTaskRepository studyTaskRepository;
+  private final UUID ownerId = UUID.randomUUID();
+  private final UUID otherUserId = UUID.randomUUID();
+  private final UUID planId = UUID.randomUUID();
 
-  @InjectMocks private StudyTaskService studyTaskService;
+  @BeforeEach
+  void setUp() {
+    studyTaskRepository = mock(StudyTaskRepository.class);
+    studyPlanService = mock(StudyPlanService.class);
+    studyStreakService = mock(StudyStreakService.class);
+    studyTaskService =
+        new StudyTaskService(studyTaskRepository, studyPlanService, studyStreakService);
+    when(studyTaskRepository.save(any(StudyTask.class))).thenAnswer(inv -> inv.getArgument(0));
+  }
+
+  private StudyPlan ownedPlan() {
+    return new StudyPlan(ownerId, "Java DSA", LocalDate.of(2026, 12, 31));
+  }
 
   @Test
-  void createTask_createsStudyTask() {
-    UUID userId = UUID.randomUUID();
-    UUID planId = UUID.randomUUID();
+  void createTask_forNonOwner_throwsNotFoundAndDoesNotSave() {
+    StudyPlan plan = ownedPlan();
+    when(studyPlanService.findOrThrow(planId)).thenReturn(plan);
+    doThrow(new ResourceNotFoundException("Study plan not found."))
+        .when(studyPlanService)
+        .assertOwned(plan, otherUserId);
 
-    StudyPlan plan = new StudyPlan(userId, "Java DSA", LocalDate.of(2026, 12, 31));
+    assertThatThrownBy(
+            () ->
+                studyTaskService.createTask(
+                    otherUserId, planId, new CreateStudyTaskRequest("Arrays", null)))
+        .isInstanceOf(ResourceNotFoundException.class);
 
-    CreateStudyTaskRequest request =
-        new CreateStudyTaskRequest("Complete Arrays", LocalDate.of(2026, 9, 10));
+    verify(studyTaskRepository, never()).save(any());
+    verifyNoInteractions(studyStreakService);
+  }
 
+  @Test
+  void createTask_recordsStreakActivity() {
+    StudyPlan plan = ownedPlan();
+    when(studyPlanService.findOrThrow(planId)).thenReturn(plan);
+
+    var response =
+        studyTaskService.createTask(
+            ownerId,
+            planId,
+            new CreateStudyTaskRequest("Complete Arrays", LocalDate.of(2026, 9, 10)));
+
+    assertThat(response.title()).isEqualTo("Complete Arrays");
+    assertThat(response.completed()).isFalse();
+    verify(studyStreakService).recordActivity(ownerId);
+  }
+
+  @Test
+  void getTasks_forNonOwner_throwsNotFound() {
+    StudyPlan plan = ownedPlan();
+    when(studyPlanService.findOrThrow(planId)).thenReturn(plan);
+    doThrow(new ResourceNotFoundException("Study plan not found."))
+        .when(studyPlanService)
+        .assertOwned(plan, otherUserId);
+
+    assertThatThrownBy(() -> studyTaskService.getTasks(otherUserId, planId))
+        .isInstanceOf(ResourceNotFoundException.class);
+  }
+
+  @Test
+  void updateTask_whenTaskDoesNotBelongToGivenPlan_throwsNotFound() {
+    StudyPlan plan = ownedPlan();
+    UUID taskId = UUID.randomUUID();
+    when(studyPlanService.findOrThrow(planId)).thenReturn(plan);
+    when(studyTaskRepository.findByIdAndStudyPlanId(taskId, planId)).thenReturn(Optional.empty());
+
+    assertThatThrownBy(
+            () ->
+                studyTaskService.updateTask(
+                    ownerId, planId, taskId, new UpdateStudyTaskRequest(null, null, null)))
+        .isInstanceOf(ResourceNotFoundException.class);
+  }
+
+  @Test
+  void updateTask_markingCompleted_recordsStreakActivity() {
+    StudyPlan plan = ownedPlan();
+    UUID taskId = UUID.randomUUID();
     StudyTask task = new StudyTask();
     task.setStudyPlan(plan);
-    task.setTitle(request.title());
-    task.setDueDate(request.dueDate());
+    task.setTitle("Complete Arrays");
     task.setCompleted(false);
+    when(studyPlanService.findOrThrow(planId)).thenReturn(plan);
+    when(studyTaskRepository.findByIdAndStudyPlanId(taskId, planId)).thenReturn(Optional.of(task));
 
-    when(studyPlanRepository.findByIdAndUserId(planId, userId))
-        .thenReturn(java.util.Optional.of(plan));
+    var response =
+        studyTaskService.updateTask(
+            ownerId, planId, taskId, new UpdateStudyTaskRequest(null, null, true));
 
-    when(studyTaskRepository.save(any(StudyTask.class))).thenReturn(task);
+    assertThat(response.completed()).isTrue();
+    verify(studyStreakService).recordActivity(ownerId);
+  }
 
-    StudyTaskResponse response = studyTaskService.createTask(userId, planId, request);
+  @Test
+  void updateTask_notTouchingCompletion_doesNotRecordStreakActivity() {
+    StudyPlan plan = ownedPlan();
+    UUID taskId = UUID.randomUUID();
+    StudyTask task = new StudyTask();
+    task.setStudyPlan(plan);
+    task.setTitle("Complete Arrays");
+    task.setCompleted(false);
+    when(studyPlanService.findOrThrow(planId)).thenReturn(plan);
+    when(studyTaskRepository.findByIdAndStudyPlanId(taskId, planId)).thenReturn(Optional.of(task));
 
-    assertEquals("Complete Arrays", response.title());
-    assertEquals(LocalDate.of(2026, 9, 10), response.dueDate());
-    assertEquals(false, response.completed());
+    studyTaskService.updateTask(
+        ownerId, planId, taskId, new UpdateStudyTaskRequest("Renamed", null, null));
+
+    verifyNoInteractions(studyStreakService);
+  }
+
+  @Test
+  void deleteTask_removesTask() {
+    StudyPlan plan = ownedPlan();
+    UUID taskId = UUID.randomUUID();
+    StudyTask task = new StudyTask();
+    task.setStudyPlan(plan);
+    when(studyPlanService.findOrThrow(planId)).thenReturn(plan);
+    when(studyTaskRepository.findByIdAndStudyPlanId(taskId, planId)).thenReturn(Optional.of(task));
+
+    studyTaskService.deleteTask(ownerId, planId, taskId);
+
+    verify(studyTaskRepository).delete(task);
   }
 }

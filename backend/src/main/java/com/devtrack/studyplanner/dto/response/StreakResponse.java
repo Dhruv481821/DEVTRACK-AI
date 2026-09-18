@@ -1,3 +1,5 @@
 package com.devtrack.studyplanner.dto.response;
 
-public record StreakResponse(int currentStreak, int longestStreak) {}
+import java.time.LocalDate;
+
+public record StreakResponse(int currentStreak, int longestStreak, LocalDate lastActivityDate) {}
