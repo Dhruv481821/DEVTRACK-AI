@@ -1,6 +1,10 @@
 package com.devtrack.common.exception;
 
 import com.devtrack.common.dto.ApiEnvelope;
+import java.time.Duration;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneOffset;
 import java.util.List;
 import java.util.UUID;
 import org.slf4j.Logger;
@@ -47,9 +51,27 @@ public class GlobalExceptionHandler {
     return respond(HttpStatus.CONFLICT, e.getErrorCode(), e.getMessage(), null);
   }
 
-  @ExceptionHandler({RateLimitExceededException.class, AiQuotaExceededException.class})
-  public ResponseEntity<ApiEnvelope<Void>> handleRateLimit(DevTrackException e) {
+  @ExceptionHandler(RateLimitExceededException.class)
+  public ResponseEntity<ApiEnvelope<Void>> handleRateLimit(RateLimitExceededException e) {
     return respond(HttpStatus.TOO_MANY_REQUESTS, e.getErrorCode(), e.getMessage(), null);
+  }
+
+  /**
+   * Split out from the generic rate-limit handler above so a Retry-After header can be set.
+   * Computed as seconds until the next UTC midnight, matching how ResumeAtsService's date-keyed
+   * quota bucket actually resets (see its buildQuotaKey). The message itself makes no time-of-day
+   * claim — a client that wants to show "resets in Xh Ym" reads this header, not the message text.
+   */
+  @ExceptionHandler(AiQuotaExceededException.class)
+  public ResponseEntity<ApiEnvelope<Void>> handleAiQuotaExceeded(AiQuotaExceededException e) {
+    long secondsUntilResetUtc =
+        Duration.between(
+                Instant.now(),
+                LocalDate.now(ZoneOffset.UTC).plusDays(1).atStartOfDay(ZoneOffset.UTC).toInstant())
+            .getSeconds();
+    return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS)
+        .header("Retry-After", String.valueOf(secondsUntilResetUtc))
+        .body(ApiEnvelope.error(e.getErrorCode(), e.getMessage(), null));
   }
 
   /** Bean Validation failures on @Valid request DTOs — translated into the same envelope shape. */

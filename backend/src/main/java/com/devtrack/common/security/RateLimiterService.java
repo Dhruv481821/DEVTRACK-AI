@@ -45,4 +45,22 @@ public class RateLimiterService {
         proxyManager.builder().build(key.getBytes(StandardCharsets.UTF_8), configSupplier);
     return bucket.tryConsume(1);
   }
+
+  /**
+   * Generic day-scoped quota, added for 09_AI_Architecture.md §7's per-user AI request cap — kept
+   * free of anything AI-specific deliberately. This class is shared/foundational code; it shouldn't
+   * need to know "AI" exists as a concept just to offer a daily-limit primitive. The caller
+   * supplies both the scope key (however it wants to partition quotas — per user, per user+day, per
+   * feature, etc.) and the numeric limit, sourced from its own configuration.
+   */
+  public boolean tryConsumeDaily(String key, int limit) {
+    Supplier<BucketConfiguration> configSupplier =
+        () ->
+            BucketConfiguration.builder()
+                .addLimit(Bandwidth.simple(limit, Duration.ofDays(1)))
+                .build();
+    Bucket bucket =
+        proxyManager.builder().build(key.getBytes(StandardCharsets.UTF_8), configSupplier);
+    return bucket.tryConsume(1);
+  }
 }

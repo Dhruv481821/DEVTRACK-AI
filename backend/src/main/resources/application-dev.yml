@@ -45,6 +45,12 @@ devtrack:
     client-secret: ${GITHUB_OAUTH_CLIENT_SECRET:placeholder}
     redirect-uri: http://localhost:8080/api/v1/github/callback
 
+  gemini:
+    # Same fallback-placeholder pattern as github-oauth above — lets context load
+    # cleanly with no key set; ATS scoring itself will fail against the real API
+    # until a real GEMINI_API_KEY is set.
+    api-key: ${GEMINI_API_KEY:placeholder}
+
   jwt:
     # DEV-ONLY keypair, generated for this scaffold — never used in prod, where
     # JWT_PRIVATE_KEY/JWT_PUBLIC_KEY come from Railway env vars instead

@@ -45,3 +45,9 @@ springdoc:
 devtrack:
   ai:
     daily-request-limit: 20      # 09_AI_Architecture.md §7 — config value, not a literal, tunable without redeploy
+
+  gemini:
+    model: gemini-3.8-flash      # verify against Google's current model list at deploy time — see GeminiProperties javadoc
+
+  resume-ats:
+    cache-ttl: 24h                # AgentConfig.cacheTtl for RESUME_ATS — Redis-expires the exact-match cache, not a correctness mechanism
