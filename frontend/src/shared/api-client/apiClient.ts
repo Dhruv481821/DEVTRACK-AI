@@ -74,7 +74,7 @@ async function request<T>(path: string, options: RequestOptions = {}, isRetry = 
   const envelope = (await res.json()) as ApiEnvelope<T>;
 
   if (!envelope.success) {
-    throw new ApiError(envelope);
+    throw new ApiError(envelope, res.status, res.headers);
   }
 
   return envelope.data;

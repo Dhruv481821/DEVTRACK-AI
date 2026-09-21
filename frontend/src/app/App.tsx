@@ -5,6 +5,8 @@ import { OAuthCallbackPage } from './pages/OAuthCallbackPage';
 import { DashboardPage } from './pages/DashboardPage';
 import { ProfilePage } from './pages/ProfilePage';
 import { SettingsPage } from './pages/SettingsPage';
+import { ResumesPage } from './pages/ResumesPage';
+import { ResumeDetailPage } from './pages/ResumeDetailPage';
 import { RequireAuth } from './layouts/RequireAuth';
 import { AppShell } from './layouts/AppShell';
 
@@ -22,6 +24,8 @@ export default function App() {
         <Route element={<RequireAuth />}>
           <Route element={<AppShell />}>
             <Route path="/dashboard" element={<DashboardPage />} />
+            <Route path="/resumes" element={<ResumesPage />} />
+            <Route path="/resumes/:id" element={<ResumeDetailPage />} />
             <Route path="/profile" element={<ProfilePage />} />
             <Route path="/settings" element={<SettingsPage />} />
           </Route>

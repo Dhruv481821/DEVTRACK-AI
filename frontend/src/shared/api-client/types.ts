@@ -30,15 +30,28 @@ export interface ApiErrorEnvelope {
 
 export type ApiEnvelope<T> = ApiSuccessEnvelope<T> | ApiErrorEnvelope;
 
-/** Thrown by the api client on any non-2xx response — carries the envelope's error. */
+/**
+ * Thrown by the api client on any non-2xx response — carries the envelope's error.
+ *
+ * status/headers were added for the AI Service Layer's quota-exceeded response (a 429 with a
+ * Retry-After header, not a JSON field — see 09_AI_Architecture.md §7's design review): the
+ * envelope alone can't carry that, since a header lives on the raw fetch Response, which the api
+ * client previously discarded before constructing this error. Kept fully generic rather than
+ * naming a "retryAfterSeconds" field here specifically — any future error that needs any header
+ * can read it the same way, and this file gains no feature-specific knowledge.
+ */
 export class ApiError extends Error {
   code: string;
   details?: Array<{ field: string; reason: string }>;
+  status: number;
+  headers: Headers;
 
-  constructor(envelope: ApiErrorEnvelope) {
+  constructor(envelope: ApiErrorEnvelope, status: number, headers: Headers) {
     super(envelope.error.message);
     this.name = 'ApiError';
     this.code = envelope.error.code;
     this.details = envelope.error.details;
+    this.status = status;
+    this.headers = headers;
   }
 }

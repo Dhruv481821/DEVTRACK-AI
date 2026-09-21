@@ -4,6 +4,7 @@ import { useLogout } from '@/features/auth/api/useAuthMutations';
 
 const NAV_ITEMS = [
   { to: '/dashboard', label: 'Dashboard' },
+  { to: '/resumes', label: 'Resumes' },
   { to: '/profile', label: 'Profile' },
   { to: '/settings', label: 'Settings' },
 ];
