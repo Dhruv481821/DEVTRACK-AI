@@ -7,12 +7,10 @@ import { ProfilePage } from './pages/ProfilePage';
 import { SettingsPage } from './pages/SettingsPage';
 import { ResumesPage } from './pages/ResumesPage';
 import { ResumeDetailPage } from './pages/ResumeDetailPage';
+import { CertificatesPage } from './pages/CertificatesPage';
 import { RequireAuth } from './layouts/RequireAuth';
 import { AppShell } from './layouts/AppShell';
 
-// Route-based code splitting (React.lazy per top-level route,
-// 08_Frontend_Architecture.md §5) is a follow-up once there are enough routes for
-// it to matter.
 export default function App() {
   return (
     <BrowserRouter>
@@ -26,6 +24,7 @@ export default function App() {
             <Route path="/dashboard" element={<DashboardPage />} />
             <Route path="/resumes" element={<ResumesPage />} />
             <Route path="/resumes/:id" element={<ResumeDetailPage />} />
+            <Route path="/certificates" element={<CertificatesPage />} />
             <Route path="/profile" element={<ProfilePage />} />
             <Route path="/settings" element={<SettingsPage />} />
           </Route>
