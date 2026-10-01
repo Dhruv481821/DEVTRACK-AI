@@ -90,12 +90,6 @@ public class SecurityConfig {
     config.setAllowedMethods(List.of("GET", "POST", "PATCH", "DELETE", "OPTIONS"));
     config.setAllowedHeaders(List.of("Authorization", "Content-Type"));
     config.setAllowCredentials(true);
-    config.setExposedHeaders(List.of("Retry-After")); // required so the refresh-token cookie is sent cross-origin
-    // Browsers only expose a small CORS-safelisted set of response headers to JavaScript by
-    // default (Content-Type, Cache-Control, etc.) — Retry-After isn't in that list. Without this,
-    // AiQuotaExceededException's 429 response carries the header over the wire correctly, but
-    // fetch's Response.headers.get('Retry-After') silently returns null in the browser, which is
-    // exactly what surfaced when this was tested end-to-end.
     config.setExposedHeaders(List.of("Retry-After"));
 
     UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
