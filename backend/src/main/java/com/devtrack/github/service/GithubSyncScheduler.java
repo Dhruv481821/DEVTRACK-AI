@@ -9,10 +9,10 @@ import org.springframework.stereotype.Component;
  * as a single Railway instance (04_System_Architecture.md §8) — Spring's {@code @Scheduled} would
  * double-fire this across multiple instances; that constraint is accepted there, not solved here.
  *
- * <p>Known gap, not solved in this batch: a user who just connected GitHub waits up to one hour for
- * their first sync rather than getting one immediately on connect. Revisit if that's worth an
- * on-demand "sync now" trigger — not added here to keep this batch to the scheduled-sync
- * requirement as written.
+ * <p>Update: the "wait up to an hour for a first sync" gap noted when this class was first added is
+ * closed — GithubController#callback now triggers an immediate synchronous sync right after
+ * connecting. This scheduler still owns every subsequent (re)sync; it's just no longer the only
+ * path to a connected user's first one.
  */
 @Component
 public class GithubSyncScheduler {

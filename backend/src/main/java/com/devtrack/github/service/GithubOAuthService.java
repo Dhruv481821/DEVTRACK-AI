@@ -86,9 +86,13 @@ public class GithubOAuthService {
    * Called by the unauthenticated callback endpoint — GitHub redirects the browser here with no
    * DevTrack session/JWT attached, so the state parameter (not the request's own auth) is what
    * identifies the user.
+   *
+   * <p>Returns the saved connection (previously void) so GithubController can trigger an immediate
+   * first sync right after connecting, instead of a newly-connected user waiting up to an hour for
+   * GithubSyncScheduler's next run — no other behavior here changed.
    */
   @Transactional
-  public void handleCallback(String code, String state) {
+  public GithubConnection handleCallback(String code, String state) {
     UUID userId =
         stateService
             .consumeState(state)
@@ -112,7 +116,7 @@ public class GithubOAuthService {
       connection.setConnectedAt(Instant.now());
     }
 
-    githubConnectionRepository.save(connection);
+    return githubConnectionRepository.save(connection);
   }
 
   @SuppressWarnings("unchecked")
