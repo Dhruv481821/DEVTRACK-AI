@@ -86,10 +86,17 @@ public class JobApplicationService {
     jobApplicationRepository.save(application);
   }
 
-  private JobApplication findOrThrow(UUID applicationId) {
+  // Package-private (not private): FR-INT-01's InterviewRoundService composes these two,
+  // same intra-module reuse pattern as ResumeSectionService reusing
+  // ResumeService.findOrThrow/assertOwned, instead of duplicating the ownership check.
+  JobApplication findOrThrow(UUID applicationId) {
     return jobApplicationRepository
         .findById(applicationId)
         .orElseThrow(() -> new ResourceNotFoundException("Job application not found."));
+  }
+
+  void assertOwned(JobApplication application, UUID userId) {
+    ownershipGuard.assertOwnedBy(application.getUserId(), userId);
   }
 
   private JobApplicationResponse toResponse(JobApplication application) {
