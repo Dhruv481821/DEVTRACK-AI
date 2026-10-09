@@ -25,21 +25,18 @@ public class ProjectController {
   private final ProjectService projectService;
   private final CurrentUserResolver currentUserResolver;
 
-  public ProjectController(
-      ProjectService projectService, CurrentUserResolver currentUserResolver) {
+  public ProjectController(ProjectService projectService, CurrentUserResolver currentUserResolver) {
     this.projectService = projectService;
     this.currentUserResolver = currentUserResolver;
   }
 
   @GetMapping
   public ApiEnvelope<List<ProjectResponse>> list() {
-    return ApiEnvelope.success(
-        projectService.getProjects(currentUserResolver.getCurrentUserId()));
+    return ApiEnvelope.success(projectService.getProjects(currentUserResolver.getCurrentUserId()));
   }
 
   @PostMapping
-  public ApiEnvelope<ProjectResponse> create(
-      @Valid @RequestBody CreateProjectRequest request) {
+  public ApiEnvelope<ProjectResponse> create(@Valid @RequestBody CreateProjectRequest request) {
     return ApiEnvelope.success(
         projectService.createProject(currentUserResolver.getCurrentUserId(), request));
   }

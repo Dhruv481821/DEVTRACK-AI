@@ -24,9 +24,7 @@ public class ProjectService {
 
   @Transactional(readOnly = true)
   public List<ProjectResponse> getProjects(UUID userId) {
-    return projectRepository
-        .findByUserIdAndDeletedAtIsNullOrderByUpdatedAtDesc(userId)
-        .stream()
+    return projectRepository.findByUserIdAndDeletedAtIsNullOrderByUpdatedAtDesc(userId).stream()
         .map(this::toResponse)
         .toList();
   }
@@ -45,8 +43,7 @@ public class ProjectService {
     return toResponse(projectRepository.save(project));
   }
 
-  public ProjectResponse updateProject(
-      UUID userId, UUID projectId, UpdateProjectRequest request) {
+  public ProjectResponse updateProject(UUID userId, UUID projectId, UpdateProjectRequest request) {
     Project project = getOwnedProject(userId, projectId);
 
     if (request.name() != null) {

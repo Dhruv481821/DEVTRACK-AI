@@ -24,8 +24,7 @@ public class TaskController {
   private final TaskService taskService;
   private final CurrentUserResolver currentUserResolver;
 
-  public TaskController(
-      TaskService taskService, CurrentUserResolver currentUserResolver) {
+  public TaskController(TaskService taskService, CurrentUserResolver currentUserResolver) {
     this.taskService = taskService;
     this.currentUserResolver = currentUserResolver;
   }
@@ -40,8 +39,7 @@ public class TaskController {
   public ApiEnvelope<TaskResponse> create(
       @PathVariable UUID projectId, @Valid @RequestBody CreateTaskRequest request) {
     return ApiEnvelope.success(
-        taskService.createTask(
-            currentUserResolver.getCurrentUserId(), projectId, request));
+        taskService.createTask(currentUserResolver.getCurrentUserId(), projectId, request));
   }
 
   @PatchMapping("/{taskId}")
@@ -50,7 +48,6 @@ public class TaskController {
       @PathVariable UUID taskId,
       @Valid @RequestBody UpdateTaskRequest request) {
     return ApiEnvelope.success(
-        taskService.updateTask(
-            currentUserResolver.getCurrentUserId(), projectId, taskId, request));
+        taskService.updateTask(currentUserResolver.getCurrentUserId(), projectId, taskId, request));
   }
 }

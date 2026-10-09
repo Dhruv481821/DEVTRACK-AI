@@ -19,10 +19,7 @@ import org.hibernate.annotations.UuidGenerator;
 @NoArgsConstructor
 public class Project {
 
-  @Id
-  @GeneratedValue
-  @UuidGenerator
-  private UUID id;
+  @Id @GeneratedValue @UuidGenerator private UUID id;
 
   @Column(name = "user_id", nullable = false)
   private UUID userId;
@@ -30,8 +27,7 @@ public class Project {
   @Column(nullable = false)
   private String name;
 
-  @Column
-  private String description;
+  @Column private String description;
 
   @Column(name = "linked_repo_snapshot_id")
   private UUID linkedRepoSnapshotId;

@@ -22,8 +22,7 @@ public class TaskService {
   private final ProjectRepository projectRepository;
   private final TaskRepository taskRepository;
 
-  public TaskService(
-      ProjectRepository projectRepository, TaskRepository taskRepository) {
+  public TaskService(ProjectRepository projectRepository, TaskRepository taskRepository) {
     this.projectRepository = projectRepository;
     this.taskRepository = taskRepository;
   }
@@ -37,8 +36,7 @@ public class TaskService {
         .toList();
   }
 
-  public TaskResponse createTask(
-      UUID userId, UUID projectId, CreateTaskRequest request) {
+  public TaskResponse createTask(UUID userId, UUID projectId, CreateTaskRequest request) {
     Project project = getOwnedProject(userId, projectId);
     Instant now = Instant.now();
 

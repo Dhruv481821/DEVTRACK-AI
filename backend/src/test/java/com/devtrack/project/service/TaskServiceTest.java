@@ -1,4 +1,3 @@
-
 package com.devtrack.project.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -37,15 +36,14 @@ class TaskServiceTest {
     taskRepository = mock(TaskRepository.class);
     taskService = new TaskService(projectRepository, taskRepository);
 
-    when(taskRepository.save(any(Task.class)))
-        .thenAnswer(invocation -> invocation.getArgument(0));
+    when(taskRepository.save(any(Task.class))).thenAnswer(invocation -> invocation.getArgument(0));
   }
 
   @Test
   void getTasks_forNonOwner_throwsNotFound() {
     UUID projectId = UUID.randomUUID();
-    when(projectRepository.findByIdAndUserIdAndDeletedAtIsNull(
-        projectId, otherUserId)).thenReturn(Optional.empty());
+    when(projectRepository.findByIdAndUserIdAndDeletedAtIsNull(projectId, otherUserId))
+        .thenReturn(Optional.empty());
 
     assertThatThrownBy(() -> taskService.getTasks(otherUserId, projectId))
         .isInstanceOf(ResourceNotFoundException.class);
@@ -54,11 +52,12 @@ class TaskServiceTest {
   @Test
   void createTask_defaultsToTodo() {
     Project project = existingProject(ownerId);
-    when(projectRepository.findByIdAndUserIdAndDeletedAtIsNull(
-        project.getId(), ownerId)).thenReturn(Optional.of(project));
+    when(projectRepository.findByIdAndUserIdAndDeletedAtIsNull(project.getId(), ownerId))
+        .thenReturn(Optional.of(project));
 
-    var response = taskService.createTask(
-        ownerId, project.getId(), new CreateTaskRequest("Write tests", null));
+    var response =
+        taskService.createTask(
+            ownerId, project.getId(), new CreateTaskRequest("Write tests", null));
 
     assertThat(response.title()).isEqualTo("Write tests");
     assertThat(response.status()).isEqualTo(TaskStatus.TODO);
@@ -69,11 +68,13 @@ class TaskServiceTest {
   @Test
   void createTask_forNonOwner_throwsNotFoundAndDoesNotSave() {
     UUID projectId = UUID.randomUUID();
-    when(projectRepository.findByIdAndUserIdAndDeletedAtIsNull(
-        projectId, otherUserId)).thenReturn(Optional.empty());
+    when(projectRepository.findByIdAndUserIdAndDeletedAtIsNull(projectId, otherUserId))
+        .thenReturn(Optional.empty());
 
-    assertThatThrownBy(() -> taskService.createTask(
-        otherUserId, projectId, new CreateTaskRequest("Write tests", null)))
+    assertThatThrownBy(
+            () ->
+                taskService.createTask(
+                    otherUserId, projectId, new CreateTaskRequest("Write tests", null)))
         .isInstanceOf(ResourceNotFoundException.class);
 
     verify(taskRepository, never()).save(any(Task.class));
@@ -83,14 +84,17 @@ class TaskServiceTest {
   void updateTask_changesProvidedFields() {
     Project project = existingProject(ownerId);
     Task task = existingTask(project);
-    when(projectRepository.findByIdAndUserIdAndDeletedAtIsNull(
-        project.getId(), ownerId)).thenReturn(Optional.of(project));
-    when(taskRepository.findByIdAndProjectId(
-        task.getId(), project.getId())).thenReturn(Optional.of(task));
+    when(projectRepository.findByIdAndUserIdAndDeletedAtIsNull(project.getId(), ownerId))
+        .thenReturn(Optional.of(project));
+    when(taskRepository.findByIdAndProjectId(task.getId(), project.getId()))
+        .thenReturn(Optional.of(task));
 
-    var response = taskService.updateTask(
-        ownerId, project.getId(), task.getId(),
-        new UpdateTaskRequest("Updated title", TaskStatus.DONE, null));
+    var response =
+        taskService.updateTask(
+            ownerId,
+            project.getId(),
+            task.getId(),
+            new UpdateTaskRequest("Updated title", TaskStatus.DONE, null));
 
     assertThat(response.title()).isEqualTo("Updated title");
     assertThat(response.status()).isEqualTo(TaskStatus.DONE);
@@ -100,12 +104,16 @@ class TaskServiceTest {
   void updateTask_forNonOwner_throwsNotFound() {
     UUID projectId = UUID.randomUUID();
     UUID taskId = UUID.randomUUID();
-    when(projectRepository.findByIdAndUserIdAndDeletedAtIsNull(
-        projectId, otherUserId)).thenReturn(Optional.empty());
+    when(projectRepository.findByIdAndUserIdAndDeletedAtIsNull(projectId, otherUserId))
+        .thenReturn(Optional.empty());
 
-    assertThatThrownBy(() -> taskService.updateTask(
-        otherUserId, projectId, taskId,
-        new UpdateTaskRequest("Updated title", TaskStatus.DONE, null)))
+    assertThatThrownBy(
+            () ->
+                taskService.updateTask(
+                    otherUserId,
+                    projectId,
+                    taskId,
+                    new UpdateTaskRequest("Updated title", TaskStatus.DONE, null)))
         .isInstanceOf(ResourceNotFoundException.class);
 
     verify(taskRepository, never()).save(any(Task.class));

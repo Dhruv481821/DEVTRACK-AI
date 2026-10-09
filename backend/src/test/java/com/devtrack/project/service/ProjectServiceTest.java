@@ -1,4 +1,3 @@
-
 package com.devtrack.project.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -40,8 +39,9 @@ class ProjectServiceTest {
   void createProject_storesProjectDetails() {
     UUID repoId = UUID.randomUUID();
 
-    var response = projectService.createProject(
-        ownerId, new CreateProjectRequest("DevTrack", "description", repoId));
+    var response =
+        projectService.createProject(
+            ownerId, new CreateProjectRequest("DevTrack", "description", repoId));
 
     assertThat(response.name()).isEqualTo("DevTrack");
     assertThat(response.description()).isEqualTo("description");
@@ -52,12 +52,12 @@ class ProjectServiceTest {
   @Test
   void updateProject_changesProvidedFields() {
     Project project = existingProject(ownerId);
-    when(projectRepository.findByIdAndUserIdAndDeletedAtIsNull(
-        project.getId(), ownerId)).thenReturn(Optional.of(project));
+    when(projectRepository.findByIdAndUserIdAndDeletedAtIsNull(project.getId(), ownerId))
+        .thenReturn(Optional.of(project));
 
-    var response = projectService.updateProject(
-        ownerId, project.getId(),
-        new UpdateProjectRequest("Renamed", null, null));
+    var response =
+        projectService.updateProject(
+            ownerId, project.getId(), new UpdateProjectRequest("Renamed", null, null));
 
     assertThat(response.name()).isEqualTo("Renamed");
     assertThat(response.description()).isEqualTo("original description");
@@ -66,12 +66,13 @@ class ProjectServiceTest {
   @Test
   void updateProject_forNonOwner_throwsNotFound() {
     Project project = existingProject(ownerId);
-    when(projectRepository.findByIdAndUserIdAndDeletedAtIsNull(
-        project.getId(), otherUserId)).thenReturn(Optional.empty());
+    when(projectRepository.findByIdAndUserIdAndDeletedAtIsNull(project.getId(), otherUserId))
+        .thenReturn(Optional.empty());
 
-    assertThatThrownBy(() -> projectService.updateProject(
-        otherUserId, project.getId(),
-        new UpdateProjectRequest("Renamed", null, null)))
+    assertThatThrownBy(
+            () ->
+                projectService.updateProject(
+                    otherUserId, project.getId(), new UpdateProjectRequest("Renamed", null, null)))
         .isInstanceOf(ResourceNotFoundException.class);
 
     verify(projectRepository, never()).save(any(Project.class));
@@ -80,8 +81,8 @@ class ProjectServiceTest {
   @Test
   void deleteProject_setsDeletedAt() {
     Project project = existingProject(ownerId);
-    when(projectRepository.findByIdAndUserIdAndDeletedAtIsNull(
-        project.getId(), ownerId)).thenReturn(Optional.of(project));
+    when(projectRepository.findByIdAndUserIdAndDeletedAtIsNull(project.getId(), ownerId))
+        .thenReturn(Optional.of(project));
 
     projectService.deleteProject(ownerId, project.getId());
 
@@ -92,11 +93,10 @@ class ProjectServiceTest {
   @Test
   void deleteProject_forNonOwner_throwsNotFound() {
     Project project = existingProject(ownerId);
-    when(projectRepository.findByIdAndUserIdAndDeletedAtIsNull(
-        project.getId(), otherUserId)).thenReturn(Optional.empty());
+    when(projectRepository.findByIdAndUserIdAndDeletedAtIsNull(project.getId(), otherUserId))
+        .thenReturn(Optional.empty());
 
-    assertThatThrownBy(
-        () -> projectService.deleteProject(otherUserId, project.getId()))
+    assertThatThrownBy(() -> projectService.deleteProject(otherUserId, project.getId()))
         .isInstanceOf(ResourceNotFoundException.class);
 
     assertThat(project.getDeletedAt()).isNull();

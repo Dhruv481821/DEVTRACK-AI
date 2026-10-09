@@ -24,10 +24,7 @@ import org.hibernate.annotations.UuidGenerator;
 @NoArgsConstructor
 public class Task {
 
-  @Id
-  @GeneratedValue
-  @UuidGenerator
-  private UUID id;
+  @Id @GeneratedValue @UuidGenerator private UUID id;
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "project_id", nullable = false)
@@ -40,8 +37,7 @@ public class Task {
   @Column(nullable = false)
   private TaskStatus status = TaskStatus.TODO;
 
-  @Column
-  private String notes;
+  @Column private String notes;
 
   @Column(name = "created_at", nullable = false, updatable = false)
   private Instant createdAt;
