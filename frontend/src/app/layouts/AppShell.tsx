@@ -6,6 +6,8 @@ const NAV_ITEMS = [
   { to: '/dashboard', label: 'Dashboard' },
   { to: '/resumes', label: 'Resumes' },
   { to: '/certificates', label: 'Certificates' },
+  { to: '/job-tracker', label: 'Job Tracker' },
+  { to: '/projects', label: 'Projects' },
   { to: '/profile', label: 'Profile' },
   { to: '/settings', label: 'Settings' },
 ];

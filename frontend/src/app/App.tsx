@@ -10,6 +10,8 @@ import { ResumeDetailPage } from './pages/ResumeDetailPage';
 import { CertificatesPage } from './pages/CertificatesPage';
 import { RequireAuth } from './layouts/RequireAuth';
 import { AppShell } from './layouts/AppShell';
+import { JobTrackerPage } from './pages/JobTrackerPage';
+import { ProjectsPage } from './pages/ProjectsPage';
 
 export default function App() {
   return (
@@ -27,6 +29,8 @@ export default function App() {
             <Route path="/certificates" element={<CertificatesPage />} />
             <Route path="/profile" element={<ProfilePage />} />
             <Route path="/settings" element={<SettingsPage />} />
+            <Route path="/job-tracker" element={<JobTrackerPage />} />
+            <Route path="/projects" element={<ProjectsPage />} />
           </Route>
         </Route>
 
