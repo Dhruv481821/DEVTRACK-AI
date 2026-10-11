@@ -203,3 +203,14 @@ wrongly exempted more broadly than intended.
 `07_Backend_Architecture.md` — Spring Boot project structure, service/repository
 layering, DTO/mapping strategy (MapStruct), the global exception handler design
 (§1.4), and the Phase 0 rate-limiting fallback decision flagged in §2.1.
+
+
+**Phase 4 portfolio endpoints (implemented):**
+
+| Method | Path | Auth | Notes |
+|---|---|---|---|
+| GET | `/api/v1/portfolio/me` | USER | Owner settings (`slug`, `headline`, `published`); unpublished defaults if none saved |
+| PATCH | `/api/v1/portfolio/me` | USER | Upsert; 409 if the slug is taken/reserved; slug is `^[a-z0-9][a-z0-9-]{1,28}[a-z0-9]$` |
+| GET | `/api/v1/portfolio/{slug}` | none | `PortfolioPublicView` only; unknown and unpublished are both 404; `Cache-Control: public, max-age=300, stale-while-revalidate=60` |
+
+Project endpoints: `/api/v1/projects` (GET, POST, PATCH `/{id}`, DELETE `/{id}`) and `/api/v1/projects/{projectId}/tasks` (GET, POST, PATCH `/{taskId}`).

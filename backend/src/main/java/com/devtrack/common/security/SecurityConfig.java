@@ -4,6 +4,7 @@ import java.util.List;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -15,11 +16,8 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 /**
- * Implements /docs/07_Backend_Architecture.md §5 and /docs/12_Security.md §11: stateless sessions
- * (JWT per request, no server-side session state), strict CORS origin allowlist (never a wildcard),
- * no separate CSRF-token mechanism — the SameSite=Strict refresh cookie + Bearer-header auth for
- * everything else already makes this API CSRF-immune by construction, per 12_Security.md §11's
- * reasoning.
+ * Implements /docs/07_Backend_Architecture.md §5 and /docs/12_Security.md §11:
+ * stateless sessions, strict CORS origin allowlist, and JWT authentication.
  */
 @Configuration
 @EnableConfigurationProperties(CorsProperties.class)
@@ -46,9 +44,7 @@ public class SecurityConfig {
 
   @Bean
   public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-    http.csrf(
-            AbstractHttpConfigurer
-                ::disable) // see class docblock — not needed given the token transport design
+    http.csrf(AbstractHttpConfigurer::disable)
         .cors(cors -> cors.configurationSource(corsConfigurationSource()))
         .sessionManagement(
             session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -59,26 +55,40 @@ public class SecurityConfig {
         .authorizeHttpRequests(
             authorize ->
                 authorize
-                    // FR-AUTH-* — registration/login/refresh must be reachable unauthenticated
+                    // Authentication endpoints must be accessible without authentication.
                     .requestMatchers("/api/v1/auth/**")
                     .permitAll()
                     .requestMatchers("/api/v1/github/callback")
                     .permitAll()
-                    // Spring's own OAuth2 authorization-request and callback endpoints —
-                    // FR-AUTH-02's Google path, must be reachable unauthenticated by definition
+
+                    // OAuth2 authorization and callback endpoints.
                     .requestMatchers("/oauth2/**", "/login/oauth2/**")
                     .permitAll()
-                    // Railway health check target — 14_DevOps.md §7
+
+                    // Health check.
                     .requestMatchers("/actuator/health")
                     .permitAll()
-                    // API docs — dev-profile only in practice (disabled in prod,
-                    // application-prod.yml)
+
+                    // API documentation.
                     .requestMatchers("/api/v1/docs/**")
                     .permitAll()
+
+                    // Portfolio settings require an authenticated USER.
+                    // Keep this rule before the public portfolio GET rule.
+                    .requestMatchers("/api/v1/portfolio/me")
+                    .hasRole("USER")
+
+                    // Public portfolios are readable without authentication.
+                    .requestMatchers(HttpMethod.GET, "/api/v1/portfolio/*")
+                    .permitAll()
+
+                    // All remaining endpoints require authentication.
                     .anyRequest()
                     .authenticated())
         .oauth2Login(oauth2 -> oauth2.successHandler(oauth2LoginSuccessHandler))
-        .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+        .addFilterBefore(
+            jwtAuthenticationFilter,
+            UsernamePasswordAuthenticationFilter.class);
 
     return http.build();
   }

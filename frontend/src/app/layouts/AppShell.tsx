@@ -10,6 +10,7 @@ const NAV_ITEMS = [
   { to: '/projects', label: 'Projects' },
   { to: '/profile', label: 'Profile' },
   { to: '/settings', label: 'Settings' },
+  { to: '/portfolio', label: 'Portfolio' },
 ];
 
 export function AppShell() {

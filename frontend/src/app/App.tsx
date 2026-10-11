@@ -12,6 +12,8 @@ import { RequireAuth } from './layouts/RequireAuth';
 import { AppShell } from './layouts/AppShell';
 import { JobTrackerPage } from './pages/JobTrackerPage';
 import { ProjectsPage } from './pages/ProjectsPage';
+import { PortfolioPage } from './pages/PortfolioPage';
+import { PublicPortfolioPage } from './pages/PublicPortfolioPage';
 
 export default function App() {
   return (
@@ -20,6 +22,7 @@ export default function App() {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/oauth-callback" element={<OAuthCallbackPage />} />
+        <Route path="/u/:slug" element={<PublicPortfolioPage />} />
 
         <Route element={<RequireAuth />}>
           <Route element={<AppShell />}>
@@ -31,6 +34,7 @@ export default function App() {
             <Route path="/settings" element={<SettingsPage />} />
             <Route path="/job-tracker" element={<JobTrackerPage />} />
             <Route path="/projects" element={<ProjectsPage />} />
+            <Route path="/portfolio" element={<PortfolioPage />} />
           </Route>
         </Route>
 
