@@ -25,8 +25,7 @@ public class PortfolioController {
   private final CurrentUserResolver currentUserResolver;
 
   public PortfolioController(
-      PortfolioService portfolioService,
-      CurrentUserResolver currentUserResolver) {
+      PortfolioService portfolioService, CurrentUserResolver currentUserResolver) {
     this.portfolioService = portfolioService;
     this.currentUserResolver = currentUserResolver;
   }
@@ -34,28 +33,23 @@ public class PortfolioController {
   @GetMapping("/me")
   public ApiEnvelope<PortfolioSettingsResponse> getMySettings() {
     return ApiEnvelope.success(
-        portfolioService.getMySettings(
-            currentUserResolver.getCurrentUserId()));
+        portfolioService.getMySettings(currentUserResolver.getCurrentUserId()));
   }
 
   @PatchMapping("/me")
   public ApiEnvelope<PortfolioSettingsResponse> updateMySettings(
       @Valid @RequestBody UpdatePortfolioRequest request) {
     return ApiEnvelope.success(
-        portfolioService.updateMySettings(
-            currentUserResolver.getCurrentUserId(), request));
+        portfolioService.updateMySettings(currentUserResolver.getCurrentUserId(), request));
   }
 
   @GetMapping("/{slug}")
-  public ResponseEntity<ApiEnvelope<PortfolioPublicView>> getPublic(
-      @PathVariable String slug) {
+  public ResponseEntity<ApiEnvelope<PortfolioPublicView>> getPublic(@PathVariable String slug) {
     return ResponseEntity.ok()
         .cacheControl(
             CacheControl.maxAge(Duration.ofMinutes(5))
                 .cachePublic()
                 .staleWhileRevalidate(Duration.ofMinutes(1)))
-        .body(
-            ApiEnvelope.success(
-                portfolioService.getPublicView(slug)));
+        .body(ApiEnvelope.success(portfolioService.getPublicView(slug)));
   }
 }

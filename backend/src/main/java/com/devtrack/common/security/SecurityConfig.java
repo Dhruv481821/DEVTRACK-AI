@@ -16,8 +16,8 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 /**
- * Implements /docs/07_Backend_Architecture.md §5 and /docs/12_Security.md §11:
- * stateless sessions, strict CORS origin allowlist, and JWT authentication.
+ * Implements /docs/07_Backend_Architecture.md §5 and /docs/12_Security.md §11: stateless sessions,
+ * strict CORS origin allowlist, and JWT authentication.
  */
 @Configuration
 @EnableConfigurationProperties(CorsProperties.class)
@@ -86,9 +86,7 @@ public class SecurityConfig {
                     .anyRequest()
                     .authenticated())
         .oauth2Login(oauth2 -> oauth2.successHandler(oauth2LoginSuccessHandler))
-        .addFilterBefore(
-            jwtAuthenticationFilter,
-            UsernamePasswordAuthenticationFilter.class);
+        .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
     return http.build();
   }

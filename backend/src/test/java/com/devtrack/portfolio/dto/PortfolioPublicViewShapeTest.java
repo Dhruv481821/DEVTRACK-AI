@@ -14,29 +14,18 @@ class PortfolioPublicViewShapeTest {
   void publicView_exposesExactlyTheAllowlistedFields() {
     assertThat(names(PortfolioPublicView.class))
         .containsExactly(
-            "displayName",
-            "headline",
-            "bio",
-            "avatarUrl",
-            "projects",
-            "certificates",
-            "github");
+            "displayName", "headline", "bio", "avatarUrl", "projects", "certificates", "github");
   }
 
   @Test
   void projectItem_exposesNoIdsRepoLinksOrTimestamps() {
-    assertThat(names(PortfolioPublicView.ProjectItem.class))
-        .containsExactly("name", "description");
+    assertThat(names(PortfolioPublicView.ProjectItem.class)).containsExactly("name", "description");
   }
 
   @Test
   void certificateItem_exposesNoIds() {
     assertThat(names(PortfolioPublicView.CertificateItem.class))
-        .containsExactly(
-            "name",
-            "issuingOrg",
-            "issueDate",
-            "verificationUrl");
+        .containsExactly("name", "issuingOrg", "issueDate", "verificationUrl");
   }
 
   @Test
@@ -46,8 +35,6 @@ class PortfolioPublicViewShapeTest {
   }
 
   private static List<String> names(Class<? extends Record> type) {
-    return Arrays.stream(type.getRecordComponents())
-        .map(RecordComponent::getName)
-        .toList();
+    return Arrays.stream(type.getRecordComponents()).map(RecordComponent::getName).toList();
   }
 }

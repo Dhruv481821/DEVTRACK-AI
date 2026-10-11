@@ -40,28 +40,24 @@ public class GithubSummaryService {
   }
 
   private GithubSummaryResponse toSummary(List<RepoSnapshot> repos) {
-    int totalStars =
-        repos.stream().mapToInt(RepoSnapshot::getStars).sum();
+    int totalStars = repos.stream().mapToInt(RepoSnapshot::getStars).sum();
 
     Map<String, Long> repoCountByLanguage =
         repos.stream()
             .map(RepoSnapshot::getPrimaryLanguage)
             .filter(language -> language != null && !language.isBlank())
-            .collect(Collectors.groupingBy(
-                Function.identity(), Collectors.counting()));
+            .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
 
     List<String> topLanguages =
         repoCountByLanguage.entrySet().stream()
             .sorted(
                 Map.Entry.<String, Long>comparingByValue()
                     .reversed()
-                    .thenComparing(
-                        Map.Entry.comparingByKey(Comparator.naturalOrder())))
+                    .thenComparing(Map.Entry.comparingByKey(Comparator.naturalOrder())))
             .limit(TOP_LANGUAGE_COUNT)
             .map(Map.Entry::getKey)
             .toList();
 
-    return new GithubSummaryResponse(
-        repos.size(), totalStars, topLanguages);
+    return new GithubSummaryResponse(repos.size(), totalStars, topLanguages);
   }
 }

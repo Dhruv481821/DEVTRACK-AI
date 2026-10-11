@@ -10,24 +10,12 @@ public record PortfolioPublicView(
     String avatarUrl,
     List<ProjectItem> projects,
     List<CertificateItem> certificates,
-    GithubStats github
-) {
+    GithubStats github) {
 
-  public record ProjectItem(
-      String name,
-      String description
-  ) {}
+  public record ProjectItem(String name, String description) {}
 
   public record CertificateItem(
-      String name,
-      String issuingOrg,
-      LocalDate issueDate,
-      String verificationUrl
-  ) {}
+      String name, String issuingOrg, LocalDate issueDate, String verificationUrl) {}
 
-  public record GithubStats(
-      int repoCount,
-      int totalStars,
-      List<String> topLanguages
-  ) {}
+  public record GithubStats(int repoCount, int totalStars, List<String> topLanguages) {}
 }

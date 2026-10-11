@@ -25,8 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class PortfolioService {
 
-  private static final Set<String> RESERVED_SLUGS =
-      Set.of("me", "api", "admin", "login");
+  private static final Set<String> RESERVED_SLUGS = Set.of("me", "api", "admin", "login");
 
   private final PortfolioRepository portfolioRepository;
   private final ProfileService profileService;
@@ -52,17 +51,13 @@ public class PortfolioService {
     return portfolioRepository
         .findById(userId)
         .map(this::toSettings)
-        .orElseGet(
-            () -> new PortfolioSettingsResponse(null, null, false));
+        .orElseGet(() -> new PortfolioSettingsResponse(null, null, false));
   }
 
   @Transactional
-  public PortfolioSettingsResponse updateMySettings(
-      UUID userId, UpdatePortfolioRequest request) {
+  public PortfolioSettingsResponse updateMySettings(UUID userId, UpdatePortfolioRequest request) {
 
-    Portfolio portfolio =
-        portfolioRepository.findById(userId)
-            .orElseGet(Portfolio::new);
+    Portfolio portfolio = portfolioRepository.findById(userId).orElseGet(Portfolio::new);
 
     boolean isNew = portfolio.getUserId() == null;
 
@@ -71,13 +66,11 @@ public class PortfolioService {
       portfolio.setCreatedAt(Instant.now());
     }
 
-    if (request.slug() != null
-        && !request.slug().equals(portfolio.getSlug())) {
+    if (request.slug() != null && !request.slug().equals(portfolio.getSlug())) {
 
       if (RESERVED_SLUGS.contains(request.slug())
           || portfolioRepository.existsBySlug(request.slug())) {
-        throw new ConflictException(
-            "That portfolio URL is already taken.");
+        throw new ConflictException("That portfolio URL is already taken.");
       }
 
       portfolio.setSlug(request.slug());
@@ -92,8 +85,7 @@ public class PortfolioService {
     }
 
     if (portfolio.getSlug() == null) {
-      throw new ValidationException(
-          "Choose a portfolio URL first.");
+      throw new ValidationException("Choose a portfolio URL first.");
     }
 
     portfolio.setUpdatedAt(Instant.now());
@@ -101,8 +93,7 @@ public class PortfolioService {
     try {
       portfolioRepository.saveAndFlush(portfolio);
     } catch (DataIntegrityViolationException e) {
-      throw new ConflictException(
-          "That portfolio URL is already taken.");
+      throw new ConflictException("That portfolio URL is already taken.");
     }
 
     return toSettings(portfolio);
@@ -112,21 +103,18 @@ public class PortfolioService {
   public PortfolioPublicView getPublicView(String slug) {
 
     Portfolio portfolio =
-        portfolioRepository.findBySlug(slug)
+        portfolioRepository
+            .findBySlug(slug)
             .filter(Portfolio::isPublished)
-            .orElseThrow(
-                () -> new ResourceNotFoundException(
-                    "Portfolio not found."));
+            .orElseThrow(() -> new ResourceNotFoundException("Portfolio not found."));
 
     UUID userId = portfolio.getUserId();
 
-    ProfileResponse profile =
-        profileService.getMyProfile(userId);
+    ProfileResponse profile = profileService.getMyProfile(userId);
 
     List<PortfolioPublicView.ProjectItem> projects =
         projectService.getProjects(userId).stream()
-            .map(p -> new PortfolioPublicView.ProjectItem(
-                p.name(), p.description()))
+            .map(p -> new PortfolioPublicView.ProjectItem(p.name(), p.description()))
             .toList();
 
     List<PortfolioPublicView.CertificateItem> certificates =
@@ -135,9 +123,12 @@ public class PortfolioService {
             .toList();
 
     PortfolioPublicView.GithubStats github =
-        githubSummaryService.summarize(userId)
-            .map(s -> new PortfolioPublicView.GithubStats(
-                s.repoCount(), s.totalStars(), s.topLanguages()))
+        githubSummaryService
+            .summarize(userId)
+            .map(
+                s ->
+                    new PortfolioPublicView.GithubStats(
+                        s.repoCount(), s.totalStars(), s.topLanguages()))
             .orElse(null);
 
     return new PortfolioPublicView(
@@ -150,20 +141,14 @@ public class PortfolioService {
         github);
   }
 
-  private PortfolioPublicView.CertificateItem toCertificateItem(
-      CertificateResponse c) {
+  private PortfolioPublicView.CertificateItem toCertificateItem(CertificateResponse c) {
     return new PortfolioPublicView.CertificateItem(
-        c.name(),
-        c.issuingOrg(),
-        c.issueDate(),
-        safeHttpUrlOrNull(c.verificationUrl()));
+        c.name(), c.issuingOrg(), c.issueDate(), safeHttpUrlOrNull(c.verificationUrl()));
   }
 
   private PortfolioSettingsResponse toSettings(Portfolio portfolio) {
     return new PortfolioSettingsResponse(
-        portfolio.getSlug(),
-        portfolio.getHeadline(),
-        portfolio.isPublished());
+        portfolio.getSlug(), portfolio.getHeadline(), portfolio.isPublished());
   }
 
   private static String blankToNull(String value) {
@@ -177,9 +162,6 @@ public class PortfolioService {
 
     String lower = url.trim().toLowerCase();
 
-    return lower.startsWith("https://")
-            || lower.startsWith("http://")
-        ? url.trim()
-        : null;
+    return lower.startsWith("https://") || lower.startsWith("http://") ? url.trim() : null;
   }
 }

@@ -28,15 +28,12 @@ class GithubSummaryServiceTest {
     repoSnapshotRepository = mock(RepoSnapshotRepository.class);
 
     githubSummaryService =
-        new GithubSummaryService(
-            githubConnectionRepository,
-            repoSnapshotRepository);
+        new GithubSummaryService(githubConnectionRepository, repoSnapshotRepository);
   }
 
   @Test
   void summarize_withoutConnection_returnsEmpty() {
-    when(githubConnectionRepository.findByUserId(userId))
-        .thenReturn(Optional.empty());
+    when(githubConnectionRepository.findByUserId(userId)).thenReturn(Optional.empty());
 
     assertThat(githubSummaryService.summarize(userId)).isEmpty();
   }
@@ -46,8 +43,7 @@ class GithubSummaryServiceTest {
     GithubConnection connection = new GithubConnection();
     connection.setId(UUID.randomUUID());
 
-    when(githubConnectionRepository.findByUserId(userId))
-        .thenReturn(Optional.of(connection));
+    when(githubConnectionRepository.findByUserId(userId)).thenReturn(Optional.of(connection));
 
     when(repoSnapshotRepository.findByGithubConnectionId(connection.getId()))
         .thenReturn(
@@ -61,8 +57,7 @@ class GithubSummaryServiceTest {
 
     assertThat(summary.repoCount()).isEqualTo(4);
     assertThat(summary.totalStars()).isEqualTo(8);
-    assertThat(summary.topLanguages())
-        .containsExactly("Java", "TypeScript");
+    assertThat(summary.topLanguages()).containsExactly("Java", "TypeScript");
   }
 
   private RepoSnapshot repo(String name, int stars, String language) {

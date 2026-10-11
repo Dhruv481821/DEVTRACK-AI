@@ -24,8 +24,7 @@ public class Portfolio {
   @Column(nullable = false)
   private String slug;
 
-  @Column
-  private String headline;
+  @Column private String headline;
 
   @Column(nullable = false)
   private boolean published = false;
