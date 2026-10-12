@@ -1,6 +1,6 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { apiClient } from '@/shared/api-client/apiClient';
-import type { CreateProjectFormValues } from '../schemas/projectSchemas';
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { apiClient } from "@/shared/api-client/apiClient";
+import type { CreateProjectFormValues } from "../schemas/projectSchemas";
 
 // Mirrors backend ProjectResponse exactly.
 export interface ProjectResponse {
@@ -12,12 +12,12 @@ export interface ProjectResponse {
   updatedAt: string;
 }
 
-const PROJECTS_QUERY_KEY = ['projects'];
+const PROJECTS_QUERY_KEY = ["projects"];
 
 export function useProjects() {
   return useQuery({
     queryKey: PROJECTS_QUERY_KEY,
-    queryFn: () => apiClient.get<ProjectResponse[]>('/api/v1/projects'),
+    queryFn: () => apiClient.get<ProjectResponse[]>("/api/v1/projects"),
   });
 }
 
@@ -26,7 +26,7 @@ export function useCreateProject() {
 
   return useMutation({
     mutationFn: (values: CreateProjectFormValues) =>
-      apiClient.post<ProjectResponse>('/api/v1/projects', values),
+      apiClient.post<ProjectResponse>("/api/v1/projects", values),
     onSuccess: () =>
       queryClient.invalidateQueries({ queryKey: PROJECTS_QUERY_KEY }),
   });
@@ -38,6 +38,28 @@ export function useDeleteProject() {
   return useMutation({
     mutationFn: (id: string) =>
       apiClient.delete<void>(`/api/v1/projects/${id}`),
+    onSuccess: () =>
+      queryClient.invalidateQueries({ queryKey: PROJECTS_QUERY_KEY }),
+  });
+}
+
+export function useUpdateProject() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({
+      id,
+      name,
+      description,
+    }: {
+      id: string;
+      name: string;
+      description: string;
+    }) =>
+      apiClient.patch<ProjectResponse>(`/api/v1/projects/${id}`, {
+        name,
+        description,
+      }),
     onSuccess: () =>
       queryClient.invalidateQueries({ queryKey: PROJECTS_QUERY_KEY }),
   });
