@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import clsx from 'clsx';
@@ -55,7 +56,14 @@ export function AtsScoreCard({ resumeId }: { resumeId: string }) {
         </Button>
       </form>
 
-      {quotaMessage && <p className="mt-4 font-body text-sm text-warning">{quotaMessage}</p>}
+      {quotaMessage && (
+        <p className="mt-4 font-body text-sm text-warning">
+          {quotaMessage}{' '}
+          <Link to="/billing" className="text-signal hover:underline">
+            See plans
+          </Link>
+        </p>
+      )}
 
       {response?.status === 'UNAVAILABLE' && (
         <p className="mt-4 font-body text-sm text-text-muted">{response.message}</p>

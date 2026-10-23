@@ -81,6 +81,10 @@ public class SecurityConfig {
                     // Public portfolios are readable without authentication.
                     .requestMatchers(HttpMethod.GET, "/api/v1/portfolio/*")
                     .permitAll()
+                    // Razorpay server-to-server callback; authenticated by its HMAC signature
+                    // (RazorpayWebhookController), not by a user session.
+                    .requestMatchers(HttpMethod.POST, "/api/v1/billing/webhook")
+                    .permitAll()
 
                     // All remaining endpoints require authentication.
                     .anyRequest()

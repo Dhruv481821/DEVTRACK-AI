@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Card } from '@/shared/ui/Card';
@@ -95,7 +96,14 @@ export function CareerAssistantPanel() {
         </p>
       )}
 
-      {limitMessage && <p className="font-body text-sm text-warning">{limitMessage}</p>}
+      {limitMessage && (
+        <p className="font-body text-sm text-warning">
+          {limitMessage}{' '}
+          <Link to="/billing" className="text-signal hover:underline">
+            See plans
+          </Link>
+        </p>
+      )}
 
       {genericError && (
         <p className="font-body text-sm text-danger">

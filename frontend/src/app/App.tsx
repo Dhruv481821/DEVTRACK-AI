@@ -1,24 +1,62 @@
+import { lazy, Suspense } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { LoginPage } from './pages/LoginPage';
 import { RegisterPage } from './pages/RegisterPage';
 import { OAuthCallbackPage } from './pages/OAuthCallbackPage';
-import { DashboardPage } from './pages/DashboardPage';
-import { ProfilePage } from './pages/ProfilePage';
-import { SettingsPage } from './pages/SettingsPage';
-import { ResumesPage } from './pages/ResumesPage';
-import { ResumeDetailPage } from './pages/ResumeDetailPage';
-import { CertificatesPage } from './pages/CertificatesPage';
 import { RequireAuth } from './layouts/RequireAuth';
 import { AppShell } from './layouts/AppShell';
-import { JobTrackerPage } from './pages/JobTrackerPage';
-import { ProjectsPage } from './pages/ProjectsPage';
-import { PortfolioPage } from './pages/PortfolioPage';
-import { PublicPortfolioPage } from './pages/PublicPortfolioPage';
-import { NotesPage } from './pages/NotesPage';
-import { CalendarPage } from './pages/CalendarPage';
-import { StudyPlannerPage } from './pages/StudyPlannerPage';
-import { DsaTrackerPage } from './pages/DsaTrackerPage';
-import { AssistantPage } from './pages/AssistantPage';
+import { PageFallback } from './layouts/PageFallback';
+
+// Entry routes (login/register/OAuth callback) stay in the main bundle so the
+// first screen paints without an extra request. Every other page is split into
+// its own chunk and loaded on first visit, so heavy dependencies (e.g. the
+// charting library on the dashboard) never ship to the login page.
+const DashboardPage = lazy(() =>
+  import('./pages/DashboardPage').then((m) => ({ default: m.DashboardPage })),
+);
+const AssistantPage = lazy(() =>
+  import('./pages/AssistantPage').then((m) => ({ default: m.AssistantPage })),
+);
+const NotesPage = lazy(() => import('./pages/NotesPage').then((m) => ({ default: m.NotesPage })));
+const CalendarPage = lazy(() =>
+  import('./pages/CalendarPage').then((m) => ({ default: m.CalendarPage })),
+);
+const StudyPlannerPage = lazy(() =>
+  import('./pages/StudyPlannerPage').then((m) => ({ default: m.StudyPlannerPage })),
+);
+const DsaTrackerPage = lazy(() =>
+  import('./pages/DsaTrackerPage').then((m) => ({ default: m.DsaTrackerPage })),
+);
+const ResumesPage = lazy(() =>
+  import('./pages/ResumesPage').then((m) => ({ default: m.ResumesPage })),
+);
+const ResumeDetailPage = lazy(() =>
+  import('./pages/ResumeDetailPage').then((m) => ({ default: m.ResumeDetailPage })),
+);
+const CertificatesPage = lazy(() =>
+  import('./pages/CertificatesPage').then((m) => ({ default: m.CertificatesPage })),
+);
+const ProfilePage = lazy(() =>
+  import('./pages/ProfilePage').then((m) => ({ default: m.ProfilePage })),
+);
+const SettingsPage = lazy(() =>
+  import('./pages/SettingsPage').then((m) => ({ default: m.SettingsPage })),
+);
+const JobTrackerPage = lazy(() =>
+  import('./pages/JobTrackerPage').then((m) => ({ default: m.JobTrackerPage })),
+);
+const ProjectsPage = lazy(() =>
+  import('./pages/ProjectsPage').then((m) => ({ default: m.ProjectsPage })),
+);
+const PortfolioPage = lazy(() =>
+  import('./pages/PortfolioPage').then((m) => ({ default: m.PortfolioPage })),
+);
+const BillingPage = lazy(() =>
+  import('./pages/BillingPage').then((m) => ({ default: m.BillingPage })),
+);
+const PublicPortfolioPage = lazy(() =>
+  import('./pages/PublicPortfolioPage').then((m) => ({ default: m.PublicPortfolioPage })),
+);
 
 export default function App() {
   return (
@@ -27,9 +65,17 @@ export default function App() {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/oauth-callback" element={<OAuthCallbackPage />} />
-        <Route path="/u/:slug" element={<PublicPortfolioPage />} />
+        <Route
+          path="/u/:slug"
+          element={
+            <Suspense fallback={<PageFallback />}>
+              <PublicPortfolioPage />
+            </Suspense>
+          }
+        />
 
         <Route element={<RequireAuth />}>
+          {/* AppShell wraps its <Outlet /> in Suspense, so the nav stays put while a page loads. */}
           <Route element={<AppShell />}>
             <Route path="/dashboard" element={<DashboardPage />} />
             <Route path="/assistant" element={<AssistantPage />} />
@@ -45,6 +91,7 @@ export default function App() {
             <Route path="/job-tracker" element={<JobTrackerPage />} />
             <Route path="/projects" element={<ProjectsPage />} />
             <Route path="/portfolio" element={<PortfolioPage />} />
+            <Route path="/billing" element={<BillingPage />} />
           </Route>
         </Route>
 

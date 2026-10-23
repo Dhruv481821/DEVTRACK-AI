@@ -22,6 +22,8 @@ import com.devtrack.ai.AiResponse;
 import com.devtrack.ai.dto.response.CareerAssistantResponse;
 import com.devtrack.ai.dto.response.CareerAssistantResult;
 import com.devtrack.ai.dto.response.CareerAssistantStatus;
+import com.devtrack.billing.entity.Tier;
+import com.devtrack.billing.service.EntitlementService;
 import com.devtrack.common.exception.AiQuotaExceededException;
 import com.devtrack.common.security.RateLimiterService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -60,8 +62,7 @@ class CareerAssistantServiceTest {
             aiProvider,
             agentConfigProvider,
             cacheService,
-            rateLimiterService,
-            new AiProperties(20),
+            aiQuotaService(rateLimiterService),
             new ObjectMapper());
 
     when(contextBuilder.build(userId))
@@ -74,6 +75,12 @@ class CareerAssistantServiceTest {
                 "system instruction",
                 Map.of("type", "object"),
                 Duration.ofHours(6)));
+  }
+
+  private static AiQuotaService aiQuotaService(RateLimiterService rateLimiterService) {
+    EntitlementService entitlementService = mock(EntitlementService.class);
+    when(entitlementService.tierFor(any())).thenReturn(Tier.FREE);
+    return new AiQuotaService(rateLimiterService, entitlementService, new AiProperties(20, 30));
   }
 
   @Test

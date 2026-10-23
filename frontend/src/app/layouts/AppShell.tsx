@@ -1,6 +1,8 @@
+import { Suspense } from 'react';
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import clsx from 'clsx';
 import { useLogout } from '@/features/auth/api/useAuthMutations';
+import { PageFallback } from './PageFallback';
 
 // Grouped by workflow: plan & learn -> career -> showcase -> account.
 const NAV_ITEMS = [
@@ -17,6 +19,7 @@ const NAV_ITEMS = [
   { to: '/portfolio', label: 'Portfolio' },
   { to: '/profile', label: 'Profile' },
   { to: '/settings', label: 'Settings' },
+  { to: '/billing', label: 'Plan & billing' },
 ];
 
 export function AppShell() {
@@ -62,7 +65,9 @@ export function AppShell() {
       </aside>
 
       <main className="flex-1 px-8 py-8">
-        <Outlet />
+        <Suspense fallback={<PageFallback />}>
+          <Outlet />
+        </Suspense>
       </main>
     </div>
   );

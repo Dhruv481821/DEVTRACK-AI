@@ -1,15 +1,12 @@
 package com.devtrack.ai.service;
 
 import com.devtrack.ai.AgentConfig;
-import com.devtrack.ai.AiProperties;
 import com.devtrack.ai.AiProvider;
 import com.devtrack.ai.AiRequest;
 import com.devtrack.ai.AiResponse;
 import com.devtrack.ai.dto.response.AtsScoreResponse;
 import com.devtrack.ai.dto.response.AtsScoreResult;
 import com.devtrack.ai.exception.AiResponseValidationException;
-import com.devtrack.common.exception.AiQuotaExceededException;
-import com.devtrack.common.security.RateLimiterService;
 import com.devtrack.resume.dto.response.ResumeResponse;
 import com.devtrack.resume.dto.response.ResumeSectionResponse;
 import com.devtrack.resume.service.ResumeSectionService;
@@ -27,7 +24,6 @@ import java.util.TreeMap;
 import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.stereotype.Service;
 
 /**
@@ -39,7 +35,6 @@ import org.springframework.stereotype.Service;
  * be.
  */
 @Service
-@EnableConfigurationProperties(AiProperties.class)
 public class ResumeAtsService {
 
   private static final Logger log = LoggerFactory.getLogger(ResumeAtsService.class);
@@ -49,8 +44,7 @@ public class ResumeAtsService {
   private final AiProvider aiProvider;
   private final ResumeAtsAgentConfig agentConfigProvider;
   private final AiResponseCacheService cacheService;
-  private final RateLimiterService rateLimiterService;
-  private final AiProperties aiProperties;
+  private final AiQuotaService aiQuotaService;
   private final ObjectMapper objectMapper;
 
   public ResumeAtsService(
@@ -59,16 +53,14 @@ public class ResumeAtsService {
       AiProvider aiProvider,
       ResumeAtsAgentConfig agentConfigProvider,
       AiResponseCacheService cacheService,
-      RateLimiterService rateLimiterService,
-      AiProperties aiProperties,
+      AiQuotaService aiQuotaService,
       ObjectMapper objectMapper) {
     this.resumeService = resumeService;
     this.resumeSectionService = resumeSectionService;
     this.aiProvider = aiProvider;
     this.agentConfigProvider = agentConfigProvider;
     this.cacheService = cacheService;
-    this.rateLimiterService = rateLimiterService;
-    this.aiProperties = aiProperties;
+    this.aiQuotaService = aiQuotaService;
     this.objectMapper = objectMapper;
   }
 
@@ -88,16 +80,8 @@ public class ResumeAtsService {
       return AtsScoreResponse.success(cachedExact.get().result(), cachedExact.get().generatedAt());
     }
 
-    // RateLimiterService knows nothing about "AI" — this class supplies the scope key and the
-    // limit (from devtrack.ai.daily-request-limit, pre-existing before this feature was built).
-    // Keeping that generic avoids a shared/common class depending on one feature's config
-    // namespace.
-    boolean allowed =
-        rateLimiterService.tryConsumeDaily(buildQuotaKey(userId), aiProperties.dailyRequestLimit());
-    if (!allowed) {
-      throw new AiQuotaExceededException(
-          "You've reached today's limit of AI requests. Try again later.");
-    }
+    // Shared per-user daily AI budget, sized by billing tier (AiQuotaService).
+    aiQuotaService.consumeOrThrow(userId);
 
     AgentConfig agentConfig = agentConfigProvider.get();
     String untrustedDataBlock = buildUntrustedDataBlock(resume, sections, jobDescription);
@@ -143,14 +127,6 @@ public class ResumeAtsService {
     }
     return AtsScoreResponse.unavailable(
         "AI insights aren't available right now — the rest of your dashboard works normally.");
-  }
-
-  // Date-scoped so a fresh bucket appears each UTC day, rather than relying on Bucket4j's own
-  // refill schedule (based on bucket creation time) to land on a calendar boundary — see
-  // GlobalExceptionHandler.handleAiQuotaExceeded for where "seconds until reset" is computed from
-  // this same UTC-midnight boundary.
-  private String buildQuotaKey(UUID userId) {
-    return AiQuotaKeys.dailyKey(userId);
   }
 
   /**

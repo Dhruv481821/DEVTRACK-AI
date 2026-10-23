@@ -224,4 +224,12 @@ per-user daily AI quota with ATS scoring (429 + `Retry-After` when exhausted).
 [{ date, overall, dsa, resume, github }], asOf }`. Deterministic (no AI, no quota). Upserts one
 `readiness_snapshot` row per user per UTC day so the 90-day trend has history.
 
+**Billing (implemented, Razorpay prepaid passes):** `GET /api/v1/billing/status`;
+`POST /api/v1/billing/orders { plan: PRO_MONTHLY|PRO_YEARLY }` (amount is server-side only);
+`POST /api/v1/billing/orders/verify { razorpayOrderId, razorpayPaymentId, razorpaySignature }`
+(HMAC-verified); `POST /api/v1/billing/webhook` (public, `X-Razorpay-Signature` over the raw
+body; `payment.captured` / `order.paid`). Fulfilment is idempotent and passes stack.
+`GET /api/v1/ai/quota` → `{ tier, dailyLimit, freeDailyLimit, proDailyLimit }`; the daily AI
+cap is per tier (`devtrack.ai.free-daily-request-limit` / `pro-daily-request-limit`).
+
 Project endpoints: `/api/v1/projects` (GET, POST, PATCH `/{id}`, DELETE `/{id}`) and `/api/v1/projects/{projectId}/tasks` (GET, POST, PATCH `/{taskId}`).

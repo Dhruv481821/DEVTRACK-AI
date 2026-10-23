@@ -47,6 +47,21 @@ public class RateLimiterService {
   }
 
   /**
+   * Generic per-minute limit for callers that supply their own scope key and limit (e.g. the public
+   * portfolio endpoint, keyed by client IP). Same Redis-backed buckets as the auth limiter.
+   */
+  public boolean tryConsumePerMinute(String key, int limitPerMinute) {
+    Supplier<BucketConfiguration> configSupplier =
+        () ->
+            BucketConfiguration.builder()
+                .addLimit(Bandwidth.simple(limitPerMinute, Duration.ofMinutes(1)))
+                .build();
+    Bucket bucket =
+        proxyManager.builder().build(key.getBytes(StandardCharsets.UTF_8), configSupplier);
+    return bucket.tryConsume(1);
+  }
+
+  /**
    * Generic day-scoped quota, added for 09_AI_Architecture.md §7's per-user AI request cap — kept
    * free of anything AI-specific deliberately. This class is shared/foundational code; it shouldn't
    * need to know "AI" exists as a concept just to offer a daily-limit primitive. The caller

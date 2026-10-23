@@ -1,15 +1,12 @@
 package com.devtrack.ai.service;
 
 import com.devtrack.ai.AgentConfig;
-import com.devtrack.ai.AiProperties;
 import com.devtrack.ai.AiProvider;
 import com.devtrack.ai.AiRequest;
 import com.devtrack.ai.AiResponse;
 import com.devtrack.ai.dto.response.CareerAssistantResponse;
 import com.devtrack.ai.dto.response.CareerAssistantResult;
 import com.devtrack.ai.exception.AiResponseValidationException;
-import com.devtrack.common.exception.AiQuotaExceededException;
-import com.devtrack.common.security.RateLimiterService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
@@ -21,7 +18,6 @@ import java.util.Optional;
 import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.stereotype.Service;
 
 /**
@@ -32,7 +28,6 @@ import org.springframework.stereotype.Service;
  * UNAVAILABLE (§8). Read-only: nothing here writes to any module (§4's blast-radius bound).
  */
 @Service
-@EnableConfigurationProperties(AiProperties.class)
 public class CareerAssistantService {
 
   private static final Logger log = LoggerFactory.getLogger(CareerAssistantService.class);
@@ -47,8 +42,7 @@ public class CareerAssistantService {
   private final AiProvider aiProvider;
   private final CareerAssistantAgentConfig agentConfigProvider;
   private final AiResponseCacheService cacheService;
-  private final RateLimiterService rateLimiterService;
-  private final AiProperties aiProperties;
+  private final AiQuotaService aiQuotaService;
   private final ObjectMapper objectMapper;
 
   public CareerAssistantService(
@@ -56,15 +50,13 @@ public class CareerAssistantService {
       AiProvider aiProvider,
       CareerAssistantAgentConfig agentConfigProvider,
       AiResponseCacheService cacheService,
-      RateLimiterService rateLimiterService,
-      AiProperties aiProperties,
+      AiQuotaService aiQuotaService,
       ObjectMapper objectMapper) {
     this.contextBuilder = contextBuilder;
     this.aiProvider = aiProvider;
     this.agentConfigProvider = agentConfigProvider;
     this.cacheService = cacheService;
-    this.rateLimiterService = rateLimiterService;
-    this.aiProperties = aiProperties;
+    this.aiQuotaService = aiQuotaService;
     this.objectMapper = objectMapper;
   }
 
@@ -90,11 +82,7 @@ public class CareerAssistantService {
       return CareerAssistantResponse.success(cached.get().result(), cached.get().generatedAt());
     }
 
-    if (!rateLimiterService.tryConsumeDaily(
-        AiQuotaKeys.dailyKey(userId), aiProperties.dailyRequestLimit())) {
-      throw new AiQuotaExceededException(
-          "You've reached today's limit of AI requests. Try again later.");
-    }
+    aiQuotaService.consumeOrThrow(userId);
 
     AgentConfig agentConfig = agentConfigProvider.get();
     AiRequest request =

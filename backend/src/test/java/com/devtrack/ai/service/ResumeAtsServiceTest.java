@@ -20,6 +20,8 @@ import com.devtrack.ai.AiResponse;
 import com.devtrack.ai.dto.response.AtsScoreResponse;
 import com.devtrack.ai.dto.response.AtsScoreResult;
 import com.devtrack.ai.dto.response.AtsScoreStatus;
+import com.devtrack.billing.entity.Tier;
+import com.devtrack.billing.service.EntitlementService;
 import com.devtrack.common.exception.AiQuotaExceededException;
 import com.devtrack.common.security.RateLimiterService;
 import com.devtrack.resume.dto.response.ResumeResponse;
@@ -58,7 +60,10 @@ class ResumeAtsServiceTest {
     agentConfigProvider = mock(ResumeAtsAgentConfig.class);
     cacheService = mock(AiResponseCacheService.class);
     rateLimiterService = mock(RateLimiterService.class);
-    AiProperties aiProperties = new AiProperties(20);
+    EntitlementService entitlementService = mock(EntitlementService.class);
+    when(entitlementService.tierFor(any())).thenReturn(Tier.FREE);
+    AiQuotaService aiQuotaService =
+        new AiQuotaService(rateLimiterService, entitlementService, new AiProperties(20, 30));
     ObjectMapper objectMapper = new ObjectMapper();
 
     resumeAtsService =
@@ -68,8 +73,7 @@ class ResumeAtsServiceTest {
             aiProvider,
             agentConfigProvider,
             cacheService,
-            rateLimiterService,
-            aiProperties,
+            aiQuotaService,
             objectMapper);
 
     ResumeResponse resume =
