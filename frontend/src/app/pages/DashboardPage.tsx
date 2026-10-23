@@ -1,6 +1,7 @@
 import { useGithubConnection, useGithubRepos } from '@/features/github/api/useGithub';
 import { RepoList } from '@/features/github/components/RepoList';
 import { LanguageBreakdown } from '@/features/github/components/LanguageBreakdown';
+import { ReadinessCard } from '@/features/analytics/components/ReadinessCard';
 
 // Phase 0 exit criterion (PRD §11): "empty but fully-styled dashboard." Per the
 // PRD's own product principle, empty states are a designed surface, not a
@@ -18,10 +19,11 @@ export function DashboardPage() {
       <div>
         <h1 className="mb-2 font-display text-2xl">Dashboard</h1>
         <p className="font-body text-text-muted">
-          Notes, Calendar, Study Planner, DSA Tracker, and Certificates are built on the backend —
-          their dashboard widgets are next. Resumes are live now; see the Resumes tab.
+          Where you stand today across practice, resume and GitHub.
         </p>
       </div>
+
+      <ReadinessCard />
 
       <div>
         <h2 className="mb-3 font-display text-lg">GitHub activity</h2>

@@ -1,5 +1,6 @@
 package com.devtrack.github.service;
 
+import com.devtrack.github.dto.response.GithubActivityResponse;
 import com.devtrack.github.dto.response.GithubSummaryResponse;
 import com.devtrack.github.entity.GithubConnection;
 import com.devtrack.github.entity.RepoSnapshot;
@@ -37,6 +38,27 @@ public class GithubSummaryService {
         .map(GithubConnection::getId)
         .map(repoSnapshotRepository::findByGithubConnectionId)
         .map(this::toSummary);
+  }
+
+  /** Empty when the user never connected GitHub. activeRepos = repos with commits in 90 days. */
+  @Transactional(readOnly = true)
+  public Optional<GithubActivityResponse> activity(UUID userId) {
+    return githubConnectionRepository
+        .findByUserId(userId)
+        .map(GithubConnection::getId)
+        .map(repoSnapshotRepository::findByGithubConnectionId)
+        .map(
+            repos ->
+                new GithubActivityResponse(
+                    repos.size(),
+                    repos.stream().mapToInt(RepoSnapshot::getCommitsLast90Days).sum(),
+                    (int) repos.stream().filter(r -> r.getCommitsLast90Days() > 0).count(),
+                    (int)
+                        repos.stream()
+                            .map(RepoSnapshot::getPrimaryLanguage)
+                            .filter(language -> language != null && !language.isBlank())
+                            .distinct()
+                            .count()));
   }
 
   private GithubSummaryResponse toSummary(List<RepoSnapshot> repos) {

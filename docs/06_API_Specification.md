@@ -219,4 +219,9 @@ layering, DTO/mapping strategy (MapStruct), the global exception handler design
 resume, job applications, study, certificates and projects via their services; shares the
 per-user daily AI quota with ATS scoring (429 + `Retry-After` when exhausted).
 
+**Phase 5 readiness (implemented, FR-ANALYTICS-01):** `GET /api/v1/analytics/readiness` →
+`{ overall, components: [{ key: DSA|RESUME|GITHUB, label, score, signals[], nextStep }], trend:
+[{ date, overall, dsa, resume, github }], asOf }`. Deterministic (no AI, no quota). Upserts one
+`readiness_snapshot` row per user per UTC day so the 90-day trend has history.
+
 Project endpoints: `/api/v1/projects` (GET, POST, PATCH `/{id}`, DELETE `/{id}`) and `/api/v1/projects/{projectId}/tasks` (GET, POST, PATCH `/{taskId}`).
