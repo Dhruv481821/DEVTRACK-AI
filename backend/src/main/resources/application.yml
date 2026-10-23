@@ -44,9 +44,18 @@ springdoc:
 
 devtrack:
   ai:
+    # Which AiProvider runs: "gemini" (default, production) or "ollama" (free local testing).
+    provider: ${AI_PROVIDER:gemini}
     # 09_AI_Architecture.md §7 per-user daily cap, now per plan (shared across all AI features).
     free-daily-request-limit: 3
     pro-daily-request-limit: 30
+
+  ollama:
+    # Only used when devtrack.ai.provider=ollama. Install Ollama, then `ollama pull <model>`.
+    base-url: ${OLLAMA_BASE_URL:http://localhost:11434}
+    model: ${OLLAMA_MODEL:qwen2.5:7b}
+    context-window: 8192
+    timeout: 120s
 
   gemini:
     model: gemini-3.8-flash      # verify against Google's current model list at deploy time — see GeminiProperties javadoc

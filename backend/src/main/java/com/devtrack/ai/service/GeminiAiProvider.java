@@ -10,6 +10,7 @@ import java.time.Duration;
 import java.util.concurrent.ThreadLocalRandom;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
@@ -29,6 +30,8 @@ import org.springframework.web.client.RestClientResponseException;
  * GithubOAuthService, not a shared bean — same testability reasoning noted there.
  */
 @Service
+// Default provider; devtrack.ai.provider=ollama swaps in OllamaAiProvider for free local testing.
+@ConditionalOnProperty(name = "devtrack.ai.provider", havingValue = "gemini", matchIfMissing = true)
 @EnableConfigurationProperties(GeminiProperties.class)
 public class GeminiAiProvider implements AiProvider {
 
