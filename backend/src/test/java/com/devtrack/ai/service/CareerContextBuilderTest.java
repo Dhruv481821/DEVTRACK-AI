@@ -78,7 +78,7 @@ class CareerContextBuilderTest {
     when(studyPlanService.getPlans(userId)).thenReturn(List.of());
     when(studyStreakService.getStreak(userId)).thenReturn(new StreakResponse(0, 0, null));
     when(certificateService.listMyCertificates(userId)).thenReturn(List.of());
-    when(projectService.listMyProjects(userId)).thenReturn(List.of());
+    when(projectService.getProjects(userId)).thenReturn(List.of());
   }
 
   @Test

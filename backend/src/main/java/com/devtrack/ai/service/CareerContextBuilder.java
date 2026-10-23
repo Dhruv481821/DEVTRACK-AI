@@ -246,7 +246,7 @@ public class CareerContextBuilder {
   }
 
   private void appendProjects(UUID userId, StringBuilder block, List<String> basedOn) {
-    List<ProjectResponse> projects = projectService.listMyProjects(userId);
+    List<ProjectResponse> projects = projectService.getProjects(userId);
     block.append("<projects>\n");
     if (projects.isEmpty()) {
       block.append("no data\n");
