@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.http.MediaType;
@@ -37,6 +38,7 @@ public class OllamaAiProvider implements AiProvider {
   private final ObjectMapper objectMapper;
   private final OllamaProperties properties;
 
+  @Autowired
   public OllamaAiProvider(
       RestClient.Builder restClientBuilder,
       ObjectMapper objectMapper,
