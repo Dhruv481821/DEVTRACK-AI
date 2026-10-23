@@ -14,6 +14,10 @@ import { JobTrackerPage } from './pages/JobTrackerPage';
 import { ProjectsPage } from './pages/ProjectsPage';
 import { PortfolioPage } from './pages/PortfolioPage';
 import { PublicPortfolioPage } from './pages/PublicPortfolioPage';
+import { NotesPage } from './pages/NotesPage';
+import { CalendarPage } from './pages/CalendarPage';
+import { StudyPlannerPage } from './pages/StudyPlannerPage';
+import { DsaTrackerPage } from './pages/DsaTrackerPage';
 
 export default function App() {
   return (
@@ -27,6 +31,10 @@ export default function App() {
         <Route element={<RequireAuth />}>
           <Route element={<AppShell />}>
             <Route path="/dashboard" element={<DashboardPage />} />
+            <Route path="/notes" element={<NotesPage />} />
+            <Route path="/calendar" element={<CalendarPage />} />
+            <Route path="/study-planner" element={<StudyPlannerPage />} />
+            <Route path="/dsa" element={<DsaTrackerPage />} />
             <Route path="/resumes" element={<ResumesPage />} />
             <Route path="/resumes/:id" element={<ResumeDetailPage />} />
             <Route path="/certificates" element={<CertificatesPage />} />

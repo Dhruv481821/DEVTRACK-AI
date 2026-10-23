@@ -2,15 +2,20 @@ import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import clsx from 'clsx';
 import { useLogout } from '@/features/auth/api/useAuthMutations';
 
+// Grouped by workflow: plan & learn -> career -> showcase -> account.
 const NAV_ITEMS = [
   { to: '/dashboard', label: 'Dashboard' },
+  { to: '/notes', label: 'Notes' },
+  { to: '/calendar', label: 'Calendar' },
+  { to: '/study-planner', label: 'Study Planner' },
+  { to: '/dsa', label: 'DSA Tracker' },
   { to: '/resumes', label: 'Resumes' },
-  { to: '/certificates', label: 'Certificates' },
   { to: '/job-tracker', label: 'Job Tracker' },
   { to: '/projects', label: 'Projects' },
+  { to: '/certificates', label: 'Certificates' },
+  { to: '/portfolio', label: 'Portfolio' },
   { to: '/profile', label: 'Profile' },
   { to: '/settings', label: 'Settings' },
-  { to: '/portfolio', label: 'Portfolio' },
 ];
 
 export function AppShell() {

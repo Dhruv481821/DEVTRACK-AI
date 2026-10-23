@@ -71,6 +71,11 @@ async function request<T>(path: string, options: RequestOptions = {}, isRetry = 
     return request<T>(path, options, true);
   }
 
+  // 204 No Content has no envelope (e.g. study-plan/task DELETE) — nothing to unwrap.
+  if (res.status === 204) {
+    return undefined as T;
+  }
+
   const envelope = (await res.json()) as ApiEnvelope<T>;
 
   if (!envelope.success) {
