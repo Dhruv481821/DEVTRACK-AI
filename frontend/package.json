@@ -22,7 +22,7 @@
     "react-hook-form": "^7.53.0",
     "@hookform/resolvers": "^3.9.0",
     "zod": "^3.23.8",
-    "lucide-react": "^0.446.0",
+    "lucide-react": "^1.60.0",
     "cmdk": "^1.0.0",
     "recharts": "^2.12.7",
     "clsx": "^2.1.1",
