@@ -76,6 +76,8 @@ devtrack:
 
   resend:
     api-key: ${RESEND_API_KEY}
+    # After verifying your domain in Resend, set e.g. "DevTrack AI <noreply@yourdomain.com>".
+    from-address: ${RESEND_FROM_ADDRESS:DevTrack AI <onboarding@resend.dev>}
 
   cloudinary:
     cloud-name: ${CLOUDINARY_CLOUD_NAME}

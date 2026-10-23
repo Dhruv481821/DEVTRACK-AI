@@ -66,7 +66,7 @@ devtrack:
     base-url: http://localhost:5173
 
   resend:
-    # Blank is fine for local dev — Resend calls will fail auth and get logged
-    # (ResendEmailService swallows the failure), never crash the app. Fill in a
-    # real key only if you actually want to test email delivery locally.
-    api-key: ""
+    # Unset is fine for local dev — Resend calls fail auth and are logged
+    # (ResendEmailService swallows the failure), never crashing the app. Set the
+    # RESEND_API_KEY environment variable to test real email delivery locally.
+    api-key: ${RESEND_API_KEY:}

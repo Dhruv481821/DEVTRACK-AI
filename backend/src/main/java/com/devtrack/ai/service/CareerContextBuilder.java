@@ -107,7 +107,7 @@ public class CareerContextBuilder {
           .append(formatCounts(new TreeMap<>(trends.difficultyDistribution())))
           .append('\n');
       block.append("most practiced topics: ").append(topTags(trends.tagFrequency())).append('\n');
-      basedOn.add("DSA practice (" + trends.totalProblems() + " problems)");
+      basedOn.add("DSA practice (" + plural(trends.totalProblems(), "problem") + ")");
     }
     block.append("</dsa_practice>\n");
   }
@@ -125,7 +125,7 @@ public class CareerContextBuilder {
           .append("top languages: ")
           .append(s.topLanguages().isEmpty() ? "unknown" : String.join(", ", s.topLanguages()))
           .append('\n');
-      basedOn.add("GitHub (" + s.repoCount() + " repositories)");
+      basedOn.add("GitHub (" + plural(s.repoCount(), "repository", "repositories") + ")");
     }
     block.append("</github>\n");
   }
@@ -301,6 +301,14 @@ public class CareerContextBuilder {
   /** The question gets the same tag-neutralising as data fields, with the request's own cap. */
   static String sanitizeQuestion(String question) {
     return question.replace("<", "‹").replace(">", "›");
+  }
+
+  static String plural(long count, String singular) {
+    return plural(count, singular, singular + "s");
+  }
+
+  static String plural(long count, String singular, String pluralForm) {
+    return count + " " + (count == 1 ? singular : pluralForm);
   }
 
   static String truncate(String value, int max) {

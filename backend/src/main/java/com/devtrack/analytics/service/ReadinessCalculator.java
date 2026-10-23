@@ -55,7 +55,7 @@ public final class ReadinessCalculator {
     int score = clamp(volume + consistency + depth);
 
     List<String> signals = new ArrayList<>();
-    signals.add(in.totalProblems() + " problems logged");
+    signals.add(plural(in.totalProblems(), "problem") + " logged");
     signals.add("Active on " + activeDays + " of the last 30 days");
     signals.add(Math.round(depthShare * 100) + "% medium or hard");
 
@@ -98,9 +98,9 @@ public final class ReadinessCalculator {
 
     List<String> signals =
         List.of(
-            in.commitsLast90Days() + " commits in the last 90 days",
-            in.activeRepos() + " repositories with recent commits",
-            in.languageCount() + " primary languages");
+            plural(in.commitsLast90Days(), "commit") + " in the last 90 days",
+            plural(in.activeRepos(), "repository", "repositories") + " with recent commits",
+            plural(in.languageCount(), "primary language"));
 
     String nextStep = null;
     if (score < 100) {
@@ -151,6 +151,14 @@ public final class ReadinessCalculator {
   /** Unweighted mean of the component scores, rounded. */
   public static int overall(List<Component> components) {
     return clamp(components.stream().mapToInt(Component::score).average().orElse(0));
+  }
+
+  private static String plural(long count, String singular) {
+    return plural(count, singular, singular + "s");
+  }
+
+  private static String plural(long count, String singular, String pluralForm) {
+    return count + " " + (count == 1 ? singular : pluralForm);
   }
 
   private static double ratio(double value, double target) {

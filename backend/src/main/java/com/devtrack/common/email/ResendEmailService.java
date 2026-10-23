@@ -3,6 +3,7 @@ package com.devtrack.common.email;
 import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
@@ -17,13 +18,17 @@ import org.springframework.web.client.RestClient;
 public class ResendEmailService implements EmailService {
 
   private static final Logger log = LoggerFactory.getLogger(ResendEmailService.class);
-  private static final String FROM_ADDRESS =
-      "DevTrack AI <noreply@devtrack.ai>"; // update once a domain is verified — 15_Deployment.md §1
-  // step 5
-
   private final RestClient restClient;
 
-  public ResendEmailService(EmailProperties properties) {
+  // Resend only accepts a sender on a domain you have verified with them. Until then, the default
+  // is Resend's shared test sender, which can deliver only to the Resend account owner's email.
+  private final String fromAddress;
+
+  public ResendEmailService(
+      EmailProperties properties,
+      @Value("${devtrack.resend.from-address:DevTrack AI <onboarding@resend.dev>}")
+          String fromAddress) {
+    this.fromAddress = fromAddress;
     this.restClient =
         RestClient.builder()
             .baseUrl("https://api.resend.com")
@@ -56,7 +61,7 @@ public class ResendEmailService implements EmailService {
       restClient
           .post()
           .uri("/emails")
-          .body(Map.of("from", FROM_ADDRESS, "to", toEmail, "subject", subject, "html", htmlBody))
+          .body(Map.of("from", fromAddress, "to", toEmail, "subject", subject, "html", htmlBody))
           .retrieve()
           .toBodilessEntity();
     } catch (Exception e) {
