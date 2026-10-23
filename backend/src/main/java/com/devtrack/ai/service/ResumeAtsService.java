@@ -19,8 +19,6 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.time.Instant;
-import java.time.LocalDate;
-import java.time.ZoneOffset;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -45,7 +43,6 @@ import org.springframework.stereotype.Service;
 public class ResumeAtsService {
 
   private static final Logger log = LoggerFactory.getLogger(ResumeAtsService.class);
-  private static final String QUOTA_KEY_PREFIX = "ai-quota:";
 
   private final ResumeService resumeService;
   private final ResumeSectionService resumeSectionService;
@@ -153,7 +150,7 @@ public class ResumeAtsService {
   // GlobalExceptionHandler.handleAiQuotaExceeded for where "seconds until reset" is computed from
   // this same UTC-midnight boundary.
   private String buildQuotaKey(UUID userId) {
-    return QUOTA_KEY_PREFIX + userId + ":" + LocalDate.now(ZoneOffset.UTC);
+    return AiQuotaKeys.dailyKey(userId);
   }
 
   /**

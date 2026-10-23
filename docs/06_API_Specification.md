@@ -213,4 +213,10 @@ layering, DTO/mapping strategy (MapStruct), the global exception handler design
 | PATCH | `/api/v1/portfolio/me` | USER | Upsert; 409 if the slug is taken/reserved; slug is `^[a-z0-9][a-z0-9-]{1,28}[a-z0-9]$` |
 | GET | `/api/v1/portfolio/{slug}` | none | `PortfolioPublicView` only; unknown and unpublished are both 404; `Cache-Control: public, max-age=300, stale-while-revalidate=60` |
 
+**Phase 5 AI assistant (implemented, FR-AI-01):** `POST /api/v1/ai/assistant`
+`{ "question": string ≤1000 }` → `{ status: SUCCESS|CACHED_FALLBACK|UNAVAILABLE, result:
+{ answer, recommendations[], basedOn[] }, generatedAt, message }`. Context joins DSA, GitHub,
+resume, job applications, study, certificates and projects via their services; shares the
+per-user daily AI quota with ATS scoring (429 + `Retry-After` when exhausted).
+
 Project endpoints: `/api/v1/projects` (GET, POST, PATCH `/{id}`, DELETE `/{id}`) and `/api/v1/projects/{projectId}/tasks` (GET, POST, PATCH `/{taskId}`).

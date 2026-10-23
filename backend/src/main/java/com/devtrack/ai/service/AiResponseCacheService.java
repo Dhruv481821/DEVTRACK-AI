@@ -1,6 +1,7 @@
 package com.devtrack.ai.service;
 
 import com.devtrack.ai.dto.response.AtsScoreResult;
+import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.Duration;
 import java.time.Instant;
@@ -53,6 +54,41 @@ public class AiResponseCacheService {
   // expired on a timer.
   public void putLastKnownGood(String key, AtsScoreResult result, Instant generatedAt) {
     write(key, result, generatedAt, null);
+  }
+
+  /**
+   * Agent-agnostic variant for agents other than RESUME_ATS. Stored with the same {result,
+   * generatedAt} JSON shape as CachedResult; the caller supplies the result type.
+   */
+  public record Cached<T>(T result, Instant generatedAt) {}
+
+  public <T> Optional<Cached<T>> get(String key, Class<T> resultType) {
+    String raw = redisTemplate.opsForValue().get(key);
+    if (raw == null) {
+      return Optional.empty();
+    }
+    try {
+      JavaType type =
+          objectMapper.getTypeFactory().constructParametricType(Cached.class, resultType);
+      return Optional.of(objectMapper.readValue(raw, type));
+    } catch (Exception e) {
+      log.warn("Failed to deserialize cached AI response for key {}", key, e);
+      return Optional.empty();
+    }
+  }
+
+  /** ttl null = no expiry (last-known-good semantics, same as putLastKnownGood). */
+  public <T> void put(String key, T result, Instant generatedAt, Duration ttl) {
+    try {
+      String raw = objectMapper.writeValueAsString(new Cached<>(result, generatedAt));
+      if (ttl != null) {
+        redisTemplate.opsForValue().set(key, raw, ttl);
+      } else {
+        redisTemplate.opsForValue().set(key, raw);
+      }
+    } catch (Exception e) {
+      log.warn("Failed to write AI response cache for key {}", key, e);
+    }
   }
 
   private Optional<CachedResult> read(String key) {

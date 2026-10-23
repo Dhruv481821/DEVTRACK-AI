@@ -18,6 +18,7 @@ import { NotesPage } from './pages/NotesPage';
 import { CalendarPage } from './pages/CalendarPage';
 import { StudyPlannerPage } from './pages/StudyPlannerPage';
 import { DsaTrackerPage } from './pages/DsaTrackerPage';
+import { AssistantPage } from './pages/AssistantPage';
 
 export default function App() {
   return (
@@ -31,6 +32,7 @@ export default function App() {
         <Route element={<RequireAuth />}>
           <Route element={<AppShell />}>
             <Route path="/dashboard" element={<DashboardPage />} />
+            <Route path="/assistant" element={<AssistantPage />} />
             <Route path="/notes" element={<NotesPage />} />
             <Route path="/calendar" element={<CalendarPage />} />
             <Route path="/study-planner" element={<StudyPlannerPage />} />

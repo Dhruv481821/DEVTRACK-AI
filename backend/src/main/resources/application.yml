@@ -51,3 +51,6 @@ devtrack:
 
   resume-ats:
     cache-ttl: 24h                # AgentConfig.cacheTtl for RESUME_ATS — Redis-expires the exact-match cache, not a correctness mechanism
+
+  career-assistant:
+    cache-ttl: 6h                 # AgentConfig.cacheTtl for CAREER_ASSISTANT — the key already changes when source data changes

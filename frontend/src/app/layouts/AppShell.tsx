@@ -5,6 +5,7 @@ import { useLogout } from '@/features/auth/api/useAuthMutations';
 // Grouped by workflow: plan & learn -> career -> showcase -> account.
 const NAV_ITEMS = [
   { to: '/dashboard', label: 'Dashboard' },
+  { to: '/assistant', label: 'AI Assistant' },
   { to: '/notes', label: 'Notes' },
   { to: '/calendar', label: 'Calendar' },
   { to: '/study-planner', label: 'Study Planner' },

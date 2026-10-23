@@ -7,17 +7,9 @@ import { Button } from '@/shared/ui/Button';
 import { Label, FieldError } from '@/shared/ui/Input';
 import { Textarea } from '@/shared/ui/Textarea';
 import { ApiError } from '@/shared/api-client/types';
+import { quotaMessage as formatQuotaMessage } from '@/shared/lib/formatRetryAfter';
 import { useScoreResume, type AtsScoreResponse } from '../api/useAtsScore';
 import { atsScoreSchema, type AtsScoreFormValues } from '../schemas/atsScoreSchema';
-
-// Seconds-until-reset is read from the 429's Retry-After header, not a message string the
-// backend hardcoded — see ApiError's docblock and 09_AI_Architecture.md's design review. This
-// is the one place that turns the raw number into human-readable text.
-function formatRetryAfter(seconds: number): string {
-  const hours = Math.floor(seconds / 3600);
-  const minutes = Math.round((seconds % 3600) / 60);
-  return hours > 0 ? `${hours}h ${minutes}m` : `${minutes}m`;
-}
 
 export function AtsScoreCard({ resumeId }: { resumeId: string }) {
   const scoreMutation = useScoreResume(resumeId);
@@ -37,13 +29,7 @@ export function AtsScoreCard({ resumeId }: { resumeId: string }) {
       onSuccess: (data) => setResponse(data),
       onError: (error) => {
         if (error instanceof ApiError && error.status === 429) {
-          const retryAfter = error.headers.get('Retry-After');
-          const seconds = retryAfter ? Number(retryAfter) : NaN;
-          setQuotaMessage(
-            Number.isFinite(seconds)
-              ? `${error.message} Resets in ${formatRetryAfter(seconds)}.`
-              : error.message,
-          );
+          setQuotaMessage(formatQuotaMessage(error.message, error.headers.get('Retry-After')));
         }
       },
     });
