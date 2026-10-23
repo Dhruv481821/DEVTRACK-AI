@@ -7,7 +7,10 @@ import { useLogin } from '../api/useAuthMutations';
 import { loginSchema, type LoginFormValues } from '../schemas/authSchemas';
 
 // Same fallback reasoning as apiClient.ts — see that file's comment.
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080';
+// An explicitly EMPTY VITE_API_BASE_URL means same-origin: production serves the API through the
+// frontend's own domain (vercel.json rewrites /api/** to the backend) so the refresh cookie is
+// first-party. Only an unset variable falls back to the local backend.
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8080';
 const GOOGLE_OAUTH_URL = `${API_BASE_URL}/oauth2/authorization/google`;
 
 export function LoginForm() {

@@ -54,6 +54,21 @@ const PortfolioPage = lazy(() =>
 const BillingPage = lazy(() =>
   import('./pages/BillingPage').then((m) => ({ default: m.BillingPage })),
 );
+const PricingPage = lazy(() =>
+  import('./pages/PricingPage').then((m) => ({ default: m.PricingPage })),
+);
+const TermsPage = lazy(() =>
+  import('./pages/TermsPage').then((m) => ({ default: m.TermsPage })),
+);
+const PrivacyPage = lazy(() =>
+  import('./pages/PrivacyPage').then((m) => ({ default: m.PrivacyPage })),
+);
+const RefundPage = lazy(() =>
+  import('./pages/RefundPage').then((m) => ({ default: m.RefundPage })),
+);
+const ContactPage = lazy(() =>
+  import('./pages/ContactPage').then((m) => ({ default: m.ContactPage })),
+);
 const PublicPortfolioPage = lazy(() =>
   import('./pages/PublicPortfolioPage').then((m) => ({ default: m.PublicPortfolioPage })),
 );
@@ -65,6 +80,46 @@ export default function App() {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/oauth-callback" element={<OAuthCallbackPage />} />
+        <Route
+          path="/pricing"
+          element={
+            <Suspense fallback={<PageFallback />}>
+              <PricingPage />
+            </Suspense>
+          }
+        />
+        <Route
+          path="/terms"
+          element={
+            <Suspense fallback={<PageFallback />}>
+              <TermsPage />
+            </Suspense>
+          }
+        />
+        <Route
+          path="/privacy"
+          element={
+            <Suspense fallback={<PageFallback />}>
+              <PrivacyPage />
+            </Suspense>
+          }
+        />
+        <Route
+          path="/refunds"
+          element={
+            <Suspense fallback={<PageFallback />}>
+              <RefundPage />
+            </Suspense>
+          }
+        />
+        <Route
+          path="/contact"
+          element={
+            <Suspense fallback={<PageFallback />}>
+              <ContactPage />
+            </Suspense>
+          }
+        />
         <Route
           path="/u/:slug"
           element={

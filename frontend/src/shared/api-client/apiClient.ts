@@ -13,8 +13,11 @@ import { ApiError, type ApiEnvelope } from './types';
 // that weakens anything — VITE_API_BASE_URL in .env still overrides it for
 // staging/other setups; only a genuinely missing .env now degrades gracefully
 // instead of breaking silently and confusingly.
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080';
-if (!import.meta.env.VITE_API_BASE_URL) {
+// An explicitly EMPTY VITE_API_BASE_URL means same-origin: production serves the API through the
+// frontend's own domain (vercel.json rewrites /api/** to the backend) so the refresh cookie is
+// first-party. Only an unset variable falls back to the local backend.
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8080';
+if (import.meta.env.VITE_API_BASE_URL === undefined) {
   // eslint-disable-next-line no-console
   console.warn(
     '[DevTrack] VITE_API_BASE_URL is not set (missing .env?) — falling back to http://localhost:8080. ' +

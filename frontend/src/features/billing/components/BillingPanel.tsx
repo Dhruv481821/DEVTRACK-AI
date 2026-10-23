@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { Card } from '@/shared/ui/Card';
 import { Button } from '@/shared/ui/Button';
 import {
@@ -101,7 +102,16 @@ export function BillingPanel() {
         <p className="mb-4 font-body text-sm text-text-muted">
           Every tracker stays free. Pro raises your AI allowance
           {quota ? ` from ${quota.freeDailyLimit} to ${quota.proDailyLimit} requests a day` : ''}.
-          One-time payment, no auto-renewal. Pay by UPI, card or netbanking.
+          One-time payment, no auto-renewal. Pay by UPI, card or netbanking. By buying you agree to
+          the{' '}
+          <Link to="/terms" className="text-signal hover:underline">
+            Terms
+          </Link>{' '}
+          and{' '}
+          <Link to="/refunds" className="text-signal hover:underline">
+            Refund policy
+          </Link>{' '}
+          (full refund within 7 days).
         </p>
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">

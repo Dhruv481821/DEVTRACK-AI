@@ -38,6 +38,10 @@ spring:
             client-id: ${GOOGLE_OAUTH_CLIENT_ID}
             client-secret: ${GOOGLE_OAUTH_CLIENT_SECRET}
             scope: openid, email, profile
+            # Pinned to the PUBLIC (frontend) origin: Vercel proxies /login/oauth2/** to this
+            # backend so the refresh cookie is first-party. Must exactly match the redirect URI
+            # registered in Google Cloud Console. Falls back to Spring's own default if unset.
+            redirect-uri: ${GOOGLE_OAUTH_REDIRECT_URI:{baseUrl}/login/oauth2/code/{registrationId}}
 
           github:
             client-id: ${GITHUB_OAUTH_CLIENT_ID}
@@ -54,7 +58,8 @@ devtrack:
   github-oauth:
     client-id: ${GITHUB_OAUTH_CLIENT_ID}
     client-secret: ${GITHUB_OAUTH_CLIENT_SECRET}
-    redirect-uri: https://devtrack-ai-production.up.railway.app/api/v1/github/callback
+    # Public (frontend) origin, proxied by Vercel — see vercel.json. Must match the GitHub OAuth app.
+    redirect-uri: ${GITHUB_OAUTH_REDIRECT_URI}
 
   gemini:
     api-key: ${GEMINI_API_KEY}

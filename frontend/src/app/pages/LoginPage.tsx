@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { LegalFooter } from '@/features/legal/components/LegalFooter';
 import { LoginForm } from '@/features/auth/components/LoginForm';
 
 export function LoginPage() {
@@ -9,6 +10,7 @@ export function LoginPage() {
       <p className="font-body text-sm text-text-muted">
         No account? <Link to="/register" className="text-signal hover:underline">Sign up</Link>
       </p>
+      <LegalFooter />
     </div>
   );
 }
