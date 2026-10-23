@@ -10,8 +10,7 @@ import org.springframework.web.client.RestClient;
 /**
  * Real Resend API integration (not a stub), per the project's "no placeholder implementations"
  * rule. The request shape matches Resend's documented /emails endpoint; verify against a real API
- * key before relying on it in production. See
- * /docs/15_Deployment.md §1 step 5.
+ * key before relying on it in production. See /docs/15_Deployment.md §1 step 5.
  */
 @Service
 @EnableConfigurationProperties(EmailProperties.class)
