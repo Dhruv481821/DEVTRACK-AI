@@ -1,6 +1,6 @@
-# Weekly dependency update PRs. Minor/patch bumps are grouped per ecosystem so
-# they arrive as one reviewable PR; majors come individually because they can
-# break builds. Every PR runs the normal CI workflow before it can be merged.
+# Weekly dependency update PRs. Minor/patch bumps are grouped per ecosystem.
+# Major versions of core frameworks are ignored: those are planned migrations
+# (e.g. Spring Boot 4, TypeScript 7), not routine bumps.
 version: 2
 updates:
   - package-ecosystem: npm
@@ -11,6 +11,9 @@ updates:
     groups:
       frontend-minor-patch:
         update-types: [minor, patch]
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]
 
   - package-ecosystem: maven
     directory: /backend
@@ -20,6 +23,9 @@ updates:
     groups:
       backend-minor-patch:
         update-types: [minor, patch]
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]
 
   - package-ecosystem: github-actions
     directory: /
