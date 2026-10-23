@@ -72,7 +72,7 @@ handlers before a human ever has to notice them in review (which, again, isn't
 happening — §1).
 
 **TypeScript strictness:** `strict: true` in `tsconfig.json`, and
-**`@typescript-eslint/no-explicit-any` set to `error`, not `warn`** — per your own
+**`@typescript-eslint/no-explicit-any` set to `error`, not `warn`** — per the
 "Strict TypeScript" rule, a warning that never blocks a build is a suggestion; an
 error that fails CI is a standard. `any` is only permitted with an inline
 `// eslint-disable-next-line` and a comment explaining why (e.g., a genuinely
@@ -132,7 +132,7 @@ real limitation of not having a second reviewer, named here rather than implied.
 
 ## Next Document
 
-`18_Claude_Workflow.md` — how this blueprint's documents are meant to be used
-turn by turn when actually building each phase (referencing the right doc before
-writing code, per your own "never skip planning" rule), and how to keep this doc set
+`18_Development_Workflow.md` — how this blueprint's documents are used when
+actually building each phase (referencing the right doc before writing code, per the
+"never skip planning" rule), and how to keep this doc set
 itself from drifting out of sync with the real codebase as it's built.

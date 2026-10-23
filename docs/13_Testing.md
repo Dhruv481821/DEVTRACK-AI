@@ -19,7 +19,7 @@ deliberately small set of true end-to-end tests cover only the handful of journe
 where a bug would be genuinely embarrassing to ship.** This isn't a compromise on
 quality — an exhaustive e2e suite for a solo dev is real ongoing maintenance burden
 (brittle selectors, slow CI) for marginal benefit over well-targeted unit/integration
-tests, which is exactly the kind of over-engineering your own rules warn against.
+tests, which is exactly the kind of over-engineering the project rules warn against.
 
 **Coverage target: no blanket percentage gate.** A codebase can hit 90% line coverage
 while never testing the one function that actually matters (refresh token rotation)

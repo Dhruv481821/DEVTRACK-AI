@@ -35,7 +35,7 @@ This repository includes its **complete pre-implementation engineering blueprint
 20 documents covering product requirements, system architecture, database design, API
 specification, security threat modeling, AI architecture, and more — written *before*
 a line of application code, and kept in sync with the code as it's built
-(see [`18_Claude_Workflow.md`](./docs/18_Claude_Workflow.md) for how).
+(see [`18_Development_Workflow.md`](./docs/18_Development_Workflow.md) for how).
 
 This isn't boilerplate documentation. It includes a self-critical
 [architectural review](./docs/PRD_Architectural_Review.md) that surfaced real gaps —
@@ -145,5 +145,5 @@ are genuinely welcome.
 ---
 
 *This README, and the full engineering blueprint it links to, were written before
-implementation began — see [`18_Claude_Workflow.md`](./docs/18_Claude_Workflow.md)
+implementation began — see [`18_Development_Workflow.md`](./docs/18_Development_Workflow.md)
 for why that ordering matters to this project.*

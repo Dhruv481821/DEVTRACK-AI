@@ -222,7 +222,7 @@ No new functional requirements — this phase is entirely NFR-driven (see §5).
 Every FR above carries a phase tag matching PRD §6. When we write
 `19_Development_Roadmap.md`, each phase's sprint breakdown should trace back to
 this section's FR IDs — so "what am I building this week" always maps to "why,"
-per your own documentation rule.
+per the project's documentation rule.
 
 ## Next Document
 
@@ -230,5 +230,5 @@ per your own documentation rule.
 how the frontend/backend/AI-layer/external-integrations fit together, and the
 first real architecture decisions (e.g., how the AI Service Layer's
 provider-agnostic interface is actually shaped). Database design
-(`05_Database_Architecture.md`) follows immediately after, since per your own
-rule, database comes before APIs.
+(`05_Database_Architecture.md`) follows immediately after, since database comes
+before APIs.

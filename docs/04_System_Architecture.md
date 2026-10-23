@@ -271,4 +271,4 @@ job needs to move to a distributed-lock-aware scheduler first.
 `05_Database_Architecture.md` — schema design for Phase 0 entities first
 (User, Session, RefreshToken, Role, UserProfile, UserSettings), including the
 PostgreSQL-vs-alternatives justification and indexing strategy the review flagged as
-missing from the PRD. Database comes before APIs, per your own rule.
+missing from the PRD. Database comes before APIs.

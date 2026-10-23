@@ -8,10 +8,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 
 /**
- * Real Resend API integration (not a stub) — per your "never generate placeholder implementations"
- * rule. Untested against a live Resend account in this environment (no network access to
- * api.resend.com from this sandbox) — the request shape below matches Resend's documented /emails
- * endpoint, but verify against a real API key before trusting it in production. See
+ * Real Resend API integration (not a stub), per the project's "no placeholder implementations"
+ * rule. The request shape matches Resend's documented /emails endpoint; verify against a real API
+ * key before relying on it in production. See
  * /docs/15_Deployment.md §1 step 5.
  */
 @Service

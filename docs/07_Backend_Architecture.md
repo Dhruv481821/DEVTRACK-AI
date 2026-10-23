@@ -166,7 +166,7 @@ just documentation — it skips dirty-checking overhead).
 ## Next Document
 
 `08_Frontend_Architecture.md` — React project structure, TanStack Query + Zustand
-boundaries (per your original state-management split), the API client layer that
+boundaries (per the original state-management split), the API client layer that
 consumes this backend's response envelope (§2 of this doc), and how the frontend
 handles the 401 → refresh-token → retry flow against `06_API_Specification.md`'s auth
 transport decision.

@@ -124,7 +124,7 @@ button's own loading state, §2.1).
 
 ## 6. Documentation Convention
 
-**Decision: no separate Storybook instance for v1.** Per your own "never
+**Decision: no separate Storybook instance for v1.** Per the "never
 over-engineer" rule — a solo developer maintaining a full Storybook alongside the app
 itself is real ongoing overhead (keeping stories in sync with component changes) for
 a benefit (isolated component browsing) that mostly matters for teams coordinating
@@ -141,8 +141,8 @@ frontend team, which isn't the v1 reality.
 This closes the planning/architecture sequence from `02_Product_Requirements_Document.md`
 through `11_Component_Library.md`. Remaining docs in the original structure
 (`12_Security.md` through `20_Professional_README.md`) cover security threat modeling,
-testing strategy, DevOps/deployment, Git workflow, coding standards, the Claude
-working agreement, the development roadmap, and the README — each is scoped to be
+testing strategy, DevOps/deployment, Git workflow, coding standards, the development
+workflow, the development roadmap, and the README — each is scoped to be
 written the same way: one document, fully resolving anything it inherits as an open
 item from earlier docs, not restating what's already decided elsewhere.
 

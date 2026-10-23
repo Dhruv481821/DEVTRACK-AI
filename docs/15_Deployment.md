@@ -120,5 +120,5 @@ bottleneck):
 ## Next Document
 
 `16_Git_Workflow.md` — branch strategy, commit conventions (Conventional Commits, per
-your original working rules), and how the phase-based roadmap (PRD §11) maps onto
+the project working rules), and how the phase-based roadmap (PRD §11) maps onto
 actual branches and PRs.

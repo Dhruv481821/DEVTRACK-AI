@@ -25,7 +25,7 @@ the change lives in before you even open it.
 
 ## 2. Commit Convention — Conventional Commits, Scoped by Module
 
-Per your own working rule. Format: `type(scope): description`, where `scope` is the
+Conventional Commits. Format: `type(scope): description`, where `scope` is the
 module name (matching the folder structure, same reasoning as branch naming):
 
 ```
@@ -38,8 +38,8 @@ perf(dashboard): virtualize job application list
 ci(pipeline): add Dependabot for Maven ecosystem
 ```
 
-Types: `feat`, `fix`, `docs`, `refactor`, `test`, `style`, `perf`, `ci`, `chore` — per
-your original list. **No huge commits** (also your original rule) — a commit should
+Types: `feat`, `fix`, `docs`, `refactor`, `test`, `style`, `perf`, `ci`, `chore` — the
+standard list. **No huge commits** — a commit should
 represent one coherent change, small enough that its own message can describe it in
 one line without an "and" doing a lot of work.
 

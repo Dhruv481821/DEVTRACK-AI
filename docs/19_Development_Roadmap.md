@@ -2,7 +2,7 @@
 
 **Status:** Draft v1.0
 **Depends on:** the entire document set
-**This is where phase/FR-ID progress is tracked** (`18_Claude_Workflow.md` §5) — the
+**This is where phase/FR-ID progress is tracked** (`18_Development_Workflow.md` §5) — the
 tables below get updated as work actually happens, not written once and left static.
 
 **Honest starting state:** zero code has been written yet. Everything below is the
@@ -10,7 +10,7 @@ plan, not a status report of work completed — every item starts at **Not Start
 
 ---
 
-## 1. Scope of This Document (per `18_Claude_Workflow.md` §2)
+## 1. Scope of This Document (per `18_Development_Workflow.md` §2)
 
 **Only Phase 0 gets a sprint-level breakdown here.** Phases 1–5 stay at the PRD's
 phase-level granularity (§11 of the PRD) until each one gets its own mini-planning

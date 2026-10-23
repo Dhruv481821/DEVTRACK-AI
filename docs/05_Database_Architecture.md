@@ -4,7 +4,7 @@
 **Depends on:** `04_System_Architecture.md`
 **Feeds into:** `06_API_Specification.md`, `07_Backend_Architecture.md`
 
-Per your own working rule, database comes before APIs. This document covers the
+Database comes before APIs. This document covers the
 decisions that apply across the whole system (engine choice, conventions, ID strategy,
 caching, search, storage), then the **full detailed schema for Phase 0 only** —
 consistent with the phased-build approach the rest of this blueprint follows. Later
@@ -195,7 +195,7 @@ erDiagram
 > flow has anywhere to store a time-limited, single-use token. Added `verification_token`
 > (`user_id`, `token_hash`, `type` ['PASSWORD_RESET' | 'EMAIL_VERIFICATION'], `expires_at`,
 > `used_at`), migration `V2__verification_tokens.sql`. Same hashed-at-rest pattern as
-> `refresh_token` — never store the raw token. Per `18_Claude_Workflow.md` §3, this is
+> `refresh_token` — never store the raw token. Per `18_Development_Workflow.md` §3, this is
 > logged here rather than silently patched in code only.
 
 **Indexes (beyond PK/FK, which are indexed per §2's convention):**

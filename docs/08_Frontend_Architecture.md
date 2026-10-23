@@ -43,7 +43,7 @@ across other modules.
 
 ## 2. State Management Boundaries
 
-Per your original instruction ("Do NOT use Redux"), and made concrete here so
+Per the original stack decision (no Redux), and made concrete here so
 "server state vs. UI state" isn't a judgment call made differently per feature:
 
 | Goes in TanStack Query | Goes in Zustand |
@@ -115,7 +115,7 @@ just the landing/auth routes, not the entire dashboard.
 
 ## 6. Forms
 
-React Hook Form + Zod, per your original stack choice. **Convention:** each feature's
+React Hook Form + Zod, per the original stack choice. **Convention:** each feature's
 Zod schema is the single source of truth for client-side validation *shape*, but
 mirrors (not replaces) the backend's Bean Validation rules
 (`07_Backend_Architecture.md` §2) — client validation is UX (instant feedback),

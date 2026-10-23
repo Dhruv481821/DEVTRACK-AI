@@ -1,9 +1,9 @@
-# DevTrack AI — Claude Workflow
+# DevTrack AI — Development Workflow
 
 **Status:** Draft v1.0
 **Depends on:** the entire `02`–`17` document set
 **Purpose:** this is the one document in the set that isn't about the product — it's
-about how you and Claude actually use the other 19 documents once implementation
+about how the other 19 documents are used once implementation
 starts, so the discipline this planning phase has followed doesn't quietly evaporate
 the moment real code gets written under time pressure.
 
@@ -11,18 +11,16 @@ the moment real code gets written under time pressure.
 
 ## 1. The Core Rule: Never Ask for a Whole Module in One Shot
 
-Directly extending your own original instruction ("never generate the whole project
-in a single response... always build professionally in phases"). Concretely, this
-means:
+The project is built in phases, never all at once. Concretely, this means:
 
-- A single implementation request should map to **one module, at most one phase's
+- A single unit of implementation work should map to **one module, at most one phase's
   worth of work**, not "build Phase 2." Even "build the DSA Tracker" is better split
   into schema → repository/service → controller → frontend query hooks → components,
   reviewed at each step, per `13_Testing.md`'s own layered structure.
 - Before asking for code, name **which `FR-*` ID(s)** the request maps to
   (`03_Software_Requirements_Specification.md`) — this is the same traceability
-  discipline `16_Git_Workflow.md` §3 already requires for PRs; it should start at the
-  prompt, not get retrofitted at PR time.
+  discipline `16_Git_Workflow.md` §3 already requires for PRs; it should start when
+  the work is scoped, not get retrofitted at PR time.
 
 ## 2. Before Writing Code for a New Phase: A Mini-Planning Pass
 
@@ -40,7 +38,7 @@ to code:**
 2. Extend `06_API_Specification.md` with that phase's endpoint detail.
 3. Only then start implementation, following `07`/`08`'s established layering.
 
-This is the same pattern this entire session followed for Phase 0 — it should repeat
+This is the same pattern Phase 0 followed — it should repeat
 per phase, not be assumed already done for Phases 1–5 just because they're named in
 the PRD.
 
@@ -61,19 +59,13 @@ misleads. Two concrete rules:
   *what*, especially for a portfolio artifact where the design reasoning is part of
   the point (PRD §5's "engineering-credibility track").
 
-## 4. When a Future Session Disagrees With a Past Decision
+## 4. When New Work Disagrees With a Past Decision
 
-This applies to Claude specifically, in a future conversation, possibly without full
-memory of this one: **a documented decision in this blueprint is the default source
-of truth.** If a future implementation session concludes a past decision was wrong,
-the right behavior is the same one this session has used throughout — **state the
-disagreement explicitly, explain the reasoning, and get confirmation before
+**A documented decision in this blueprint is the default source of truth.** If later
+implementation work concludes a past decision was wrong, the right behavior is to
+**state the disagreement explicitly, explain the reasoning, and get agreement before
 overriding it** — not silently implement something different from what's documented
-and leave the doc stale. This mirrors your own stated preference (never blindly
-agree, challenge assumptions) applied in the other direction: a future Claude
-session shouldn't blindly override *past* Claude/human decisions either, without
-surfacing the disagreement the same way this session surfaced pushback on the
-original prompt's gaps.
+and leave the doc stale.
 
 ## 5. Progress Tracking — One Place, Not a New Document
 
@@ -86,10 +78,10 @@ to break each phase down into concrete work items; that same structure is where
 
 ## 6. Context Management for Coding Sessions
 
-Practical, not architectural: when starting a session to build a specific piece,
+Practical, not architectural: when starting work on a specific piece,
 reference the **specific relevant document(s)**, not the entire 20-file blueprint.
 Building the auth module needs `05` §7, `06` §2.1, `07` (all), and `12` §2–3
-specifically — pointing to exactly those keeps the session focused on what's actually
+specifically — pointing to exactly those keeps the work focused on what's actually
 being built, rather than re-deriving context from the whole doc set every time.
 
 ---

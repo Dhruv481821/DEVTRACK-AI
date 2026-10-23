@@ -417,6 +417,6 @@ them here too would just create two sources of truth for the same decisions.
 functional/non-functional requirements with acceptance criteria, ready to drive
 the Phase 0 architecture design.
 
-Per your own working rule ("never skip planning," "database comes before
-APIs"), the next thing we should actually design after the SRS is the **Phase 0
+Per the project's working rules ("never skip planning," "database comes before
+APIs"), the next thing to design after the SRS is the **Phase 0
 data model**, since Auth/Authz/Profile/Settings all depend on it.

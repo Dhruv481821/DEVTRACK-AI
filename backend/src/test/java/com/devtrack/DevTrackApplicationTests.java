@@ -19,8 +19,7 @@ import org.testcontainers.utility.DockerImageName;
  * profile. Per /docs/13_Testing.md §2: "Integration (repository) — Testcontainers (real Postgres),
  * not H2." A real, ephemeral container is provisioned here rather than depending on an active "dev"
  * profile and a manually-running local Postgres, which is what caused this test to fail with
- * "Failed to determine a suitable driver class" — see the diagnosis in this turn's chat response
- * for the full root-cause chain.
+ * "Failed to determine a suitable driver class" when no local Postgres was running.
  *
  * <p>Same reasoning now applies to Redis: RateLimiterService's LettuceBasedProxyManager connects to
  * Redis eagerly at bean-construction time, so the "dev" profile's static
