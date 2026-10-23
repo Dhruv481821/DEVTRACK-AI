@@ -19,3 +19,20 @@ export const loginSchema = z.object({
   password: z.string().min(1, 'Password is required'),
 });
 export type LoginFormValues = z.infer<typeof loginSchema>;
+
+export const forgotPasswordSchema = z.object({
+  email: z.string().email('Enter a valid email'),
+});
+export type ForgotPasswordFormValues = z.infer<typeof forgotPasswordSchema>;
+
+// Same rule as registration — mirrors backend PasswordResetConfirmRequest.newPassword.
+export const resetPasswordSchema = z
+  .object({
+    newPassword: passwordSchema,
+    confirmPassword: z.string(),
+  })
+  .refine((v) => v.newPassword === v.confirmPassword, {
+    message: 'Passwords do not match',
+    path: ['confirmPassword'],
+  });
+export type ResetPasswordFormValues = z.infer<typeof resetPasswordSchema>;

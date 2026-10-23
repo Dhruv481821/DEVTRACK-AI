@@ -33,3 +33,24 @@ export function useLogout() {
     onSettled: () => clearAuth(), // clear local state whether or not the network call succeeds
   });
 }
+
+// Always resolves for any well-formed email: the backend never reveals whether an account exists.
+export function useRequestPasswordReset() {
+  return useMutation({
+    mutationFn: (email: string) =>
+      apiClient.post<void>('/api/v1/auth/password-reset/request', { email }),
+  });
+}
+
+export function useConfirmPasswordReset() {
+  return useMutation({
+    mutationFn: (payload: { token: string; newPassword: string }) =>
+      apiClient.post<void>('/api/v1/auth/password-reset/confirm', payload),
+  });
+}
+
+export function useVerifyEmail() {
+  return useMutation({
+    mutationFn: (token: string) => apiClient.post<void>('/api/v1/auth/verify-email', { token }),
+  });
+}

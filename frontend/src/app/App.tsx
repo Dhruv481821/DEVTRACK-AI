@@ -69,6 +69,15 @@ const RefundPage = lazy(() =>
 const ContactPage = lazy(() =>
   import('./pages/ContactPage').then((m) => ({ default: m.ContactPage })),
 );
+const ForgotPasswordPage = lazy(() =>
+  import('./pages/ForgotPasswordPage').then((m) => ({ default: m.ForgotPasswordPage })),
+);
+const ResetPasswordPage = lazy(() =>
+  import('./pages/ResetPasswordPage').then((m) => ({ default: m.ResetPasswordPage })),
+);
+const VerifyEmailPage = lazy(() =>
+  import('./pages/VerifyEmailPage').then((m) => ({ default: m.VerifyEmailPage })),
+);
 const PublicPortfolioPage = lazy(() =>
   import('./pages/PublicPortfolioPage').then((m) => ({ default: m.PublicPortfolioPage })),
 );
@@ -80,6 +89,30 @@ export default function App() {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/oauth-callback" element={<OAuthCallbackPage />} />
+        <Route
+          path="/forgot-password"
+          element={
+            <Suspense fallback={<PageFallback />}>
+              <ForgotPasswordPage />
+            </Suspense>
+          }
+        />
+        <Route
+          path="/reset-password"
+          element={
+            <Suspense fallback={<PageFallback />}>
+              <ResetPasswordPage />
+            </Suspense>
+          }
+        />
+        <Route
+          path="/verify-email"
+          element={
+            <Suspense fallback={<PageFallback />}>
+              <VerifyEmailPage />
+            </Suspense>
+          }
+        />
         <Route
           path="/pricing"
           element={

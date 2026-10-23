@@ -1,6 +1,6 @@
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/shared/ui/Button';
 import { Input, Label, FieldError } from '@/shared/ui/Input';
 import { useLogin } from '../api/useAuthMutations';
@@ -48,6 +48,11 @@ export function LoginForm() {
           <FieldError message={errors.password?.message} />
         </div>
         <FieldError message={errors.root?.message} />
+        <div className="text-right">
+          <Link to="/forgot-password" className="font-body text-sm text-signal hover:underline">
+            Forgot password?
+          </Link>
+        </div>
         <Button type="submit" loading={loginMutation.isPending} className="w-full">
           Log in
         </Button>

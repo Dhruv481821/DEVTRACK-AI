@@ -10,6 +10,9 @@ const PUBLIC_PAGES: Array<[string, RegExp]> = [
   ['/privacy', /privacy policy/i],
   ['/refunds', /refund & cancellation policy/i],
   ['/contact', /^contact$/i],
+  ['/forgot-password', /reset your password/i],
+  ['/reset-password', /invalid reset link/i],
+  ['/verify-email', /verification link invalid/i],
 ];
 
 describe('public legal pages', () => {

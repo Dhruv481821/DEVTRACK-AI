@@ -68,8 +68,10 @@ async function request<T>(path: string, options: RequestOptions = {}, isRetry = 
     body: options.body !== undefined ? JSON.stringify(options.body) : undefined,
   });
 
-  // Single-flight refresh-and-retry — see module docblock.
-  if (res.status === 401 && !isRetry) {
+  // Single-flight refresh-and-retry — see module docblock. Never for /auth/* calls: a 401 from
+  // login/register/refresh means wrong credentials or no session, not an expired access token,
+  // so the server's own message ("Invalid email or password.") must reach the user.
+  if (res.status === 401 && !isRetry && !path.startsWith('/api/v1/auth/')) {
     await refreshAccessToken();
     return request<T>(path, options, true);
   }
